@@ -25,12 +25,13 @@ class Vat
     ): DataObject
     {
         /** @var DataObject $gatewayResponse */
-        $gatewayResponse = $proceed();
+        $gatewayResponse = $proceed($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber);
 
+        // if the result is false we start trying the fallback
         if ($gatewayResponse->request_success === false) {
             $cleanVatString = (new CleanNumberString($vatNumber))->returnStrippedString();
 
-            
+
 
             $gatewayResponse = new DataObject([
                 'is_valid' => false,
