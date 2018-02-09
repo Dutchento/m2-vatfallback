@@ -14,7 +14,7 @@ use Dutchento\Vatfallback\Service\CleanNumberString;
 class CleanNumberStringTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @dataProvider dataprovideStrippingCountry
+     * @dataProvider dataproviderStrippingCountry
      */
     public function testStrippingCountryAndChars($given, $expected)
     {
@@ -23,7 +23,7 @@ class CleanNumberStringTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $cleanNumber->returnStrippedString($given));
     }
 
-    public function dataprovideStrippingCountry()
+    public function dataproviderStrippingCountry()
     {
         return [ // given, expected
             ['NL163001688B01', '163001688B01'],
