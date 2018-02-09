@@ -9,13 +9,33 @@
 
 namespace Dutchento\Vatfallback\Plugin\Magento\Customer\Model;
 
+use Magento\Framework\DataObject;
+
 class Vat
 {
 
-    public function afterCheckVatNumber(
+    public function aroundCheckVatNumber(
         \Magento\Customer\Model\Vat $subject,
-        $result
-    ) {
-        // add here actual checking logic
+        callable $proceed,
+        $countryCode,
+        $vatNumber,
+        $requesterCountryCode,
+        $requesterVatNumber
+    ): DataObject
+    {
+        /** @var DataObject $gatewayResponse */
+        $gatewayResponse = $proceed();
+
+        if ($gatewayResponse->request_success === false) {
+            $gatewayResponse = new DataObject([
+                'is_valid' => false,
+                'request_date' => '',
+                'request_identifier' => '',
+                'request_success' => false,
+                'request_message' => __('Error during VAT Number verification.'),
+            ]);
+        }
+
+        return $gatewayResponse;
     }
 }
