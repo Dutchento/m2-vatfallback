@@ -1,0 +1,19 @@
+{
+    "name": "dutchento/m2-vatfallback",
+    "description": "Provides free VAT fallback mechanism",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sander Mangel",
+            "email": "sander@sandermaangel.nl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Dutchento\\Vatfallback\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}
