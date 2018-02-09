@@ -9,6 +9,7 @@
 
 namespace Dutchento\Vatfallback\Plugin\Magento\Customer\Model;
 
+use Dutchento\Vatfallback\Service\CleanNumberString;
 use Magento\Framework\DataObject;
 
 class Vat
@@ -27,6 +28,10 @@ class Vat
         $gatewayResponse = $proceed();
 
         if ($gatewayResponse->request_success === false) {
+            $cleanVatString = (new CleanNumberString($vatNumber))->returnStrippedString();
+
+            
+
             $gatewayResponse = new DataObject([
                 'is_valid' => false,
                 'request_date' => '',
