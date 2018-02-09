@@ -18,9 +18,9 @@ class CleanNumberStringTest extends \PHPUnit\Framework\TestCase
      */
     public function testStrippingCountryAndChars($given, $expected)
     {
-        $cleanNumber = new CleanNumberString($given);
+        $cleanNumber = new CleanNumberString();
 
-        $this->assertEquals($expected, $cleanNumber->returnStrippedString());
+        $this->assertEquals($expected, $cleanNumber->returnStrippedString($given));
     }
 
     public function dataprovideStrippingCountry()

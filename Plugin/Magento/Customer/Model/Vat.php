@@ -29,7 +29,7 @@ class Vat
 
         // if the result is false we start trying the fallback
         if ($gatewayResponse->request_success === false) {
-            $cleanVatString = (new CleanNumberString($vatNumber))->returnStrippedString();
+            $cleanVatString = (new CleanNumberString())->returnStrippedString($vatNumber);
 
 
 
