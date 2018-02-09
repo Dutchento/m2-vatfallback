@@ -1,5 +1,7 @@
 <?php
 
+namespace Dutchento\Vatfallback\Test\Unit\Service\Validate;
+
 use PHPUnit\Framework\TestCase;
 use Dutchento\Vatfallback\Service\Validate\Regex;
 

@@ -7,7 +7,7 @@
  * MIT license applies to this software
  */
 
-namespace Dutchento\Vatfallback\Test\Unit\Test;
+namespace Dutchento\Vatfallback\Test\Unit\Service;
 
 use Dutchento\Vatfallback\Service\CleanNumberString;
 
