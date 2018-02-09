@@ -30,4 +30,4 @@ Warning: Since all of the free VIES API's are slow and somewhat unreliable the c
 # Authors
 
 - Sander Mangel [@sandermagenl](https://twitter.com/sandermangel)
-- Peter Jaap Blaakmeer []@peterjaap](https://twitter.com/peterjaap)
+- Peter Jaap Blaakmeer [@peterjaap](https://twitter.com/peterjaap)
