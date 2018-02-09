@@ -9,12 +9,10 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
-class Regex
+class Regex implements ValidationServiceInterface
 {
     /**
-     * @param string $vatNumber
-     * @param string $countryIso2
-     * @return bool
+     * @inheritdoc
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {

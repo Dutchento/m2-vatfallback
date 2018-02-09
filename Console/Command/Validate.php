@@ -9,14 +9,25 @@
 
 namespace Dutchento\Vatfallback\Console\Command;
 
+use Dutchento\Vatfallback\Service\ValidateVatInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Test extends Command
+class Validate extends Command
 {
+    private $validationService;
+
+    /**
+    * @param ValidateVatInterface $validationService
+    */
+    public function __construct(
+        ValidateVatInterface $validationService
+    ) {
+        $this->validationService = $validationService;
+        parent::__construct();
+    }
 
     /**
      * {@inheritdoc}
@@ -28,7 +39,9 @@ class Test extends Command
         $country = $input->getArgument('country');
         $number = $input->getArgument('number');
 
-        $output->writeln("{$country} {$number}");
+        $result = $this->validationService->byNumberAndCountry($number, $country);
+
+        $output->writeln(var_export($result, true));
     }
 
     /**
@@ -36,7 +49,7 @@ class Test extends Command
      */
     protected function configure()
     {
-        $this->setName('vatfallback:test');
+        $this->setName('vat:validate');
         $this->setDescription('Test VAT fallback with configured flow');
         $this->setDefinition([
             new InputArgument('country', InputArgument::REQUIRED, 'country'),

@@ -8,6 +8,9 @@
             "email": "sander@sandermaangel.nl"
         }
     ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.2"
+    },
     "autoload": {
         "psr-4": {
             "Dutchento\\Vatfallback\\": ""

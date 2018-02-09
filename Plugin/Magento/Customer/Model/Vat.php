@@ -9,7 +9,7 @@
 
 namespace Dutchento\Vatfallback\Plugin\Magento\Customer\Model;
 
-use Dutchento\Vatfallback\Service\CleanNumberString;
+use Dutchento\Vatfallback\Service\ValidateVat;
 use Magento\Framework\DataObject;
 
 class Vat
@@ -28,20 +28,31 @@ class Vat
         $gatewayResponse = $proceed($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber);
 
         // if the result is false we start trying the fallback
-        if ($gatewayResponse->request_success === false) {
-            $cleanVatString = (new CleanNumberString())->returnStrippedString($vatNumber);
-
-
-
-            $gatewayResponse = new DataObject([
-                'is_valid' => false,
-                'request_date' => '',
-                'request_identifier' => '',
-                'request_success' => false,
-                'request_message' => __('Error during VAT Number verification.'),
-            ]);
+        if ($gatewayResponse->getRequestSuccess() !== false) {
+            return $gatewayResponse;
         }
 
-        return $gatewayResponse;
+        $validateService = new ValidateVat();
+        $response = $validateService->byNumberAndCountry($vatNumber, $countryCode);
+
+        return $response ?
+            $this->createGatewayResponseObject($vatNumber, true, __('VAT Number is valid.')) :
+            $this->createGatewayResponseObject($vatNumber, false, __('Please enter a valid VAT number.')) ;
+    }
+
+    /**
+     * @param string $vatNumber
+     * @param bool $success
+     * @return DataObject
+     */
+    public function createGatewayResponseObject(string $vatNumber, bool $success, string $message): DataObject
+    {
+        return new DataObject([
+            'is_valid' => $success,
+            'request_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+            'request_identifier' => $vatNumber,
+            'request_success' => $success,
+            'request_message' => $message,
+        ]);
     }
 }

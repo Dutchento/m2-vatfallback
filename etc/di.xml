@@ -1,12 +1,13 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<preference for="Dutchento\Vatfallback\Service\ValidateVatInterface" type="Dutchento\Vatfallback\Service\ValidateVat" />
 	<type name="Magento\Customer\Model\Vat">
 		<plugin disabled="false" name="Dutchento_Vatfallback_Plugin_Magento_Customer_Model_Vat" sortOrder="10" type="Dutchento\Vatfallback\Plugin\Magento\Customer\Model\Vat"/>
 	</type>
 	<type name="Magento\Framework\Console\CommandList">
 		<arguments>
 			<argument name="commands" xsi:type="array">
-				<item name="test" xsi:type="object">Dutchento\Vatfallback\Console\Command\Test</item>
+				<item name="test" xsi:type="object">Dutchento\Vatfallback\Console\Command\Validate</item>
 			</argument>
 		</arguments>
 	</type>
