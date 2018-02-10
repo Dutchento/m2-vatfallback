@@ -35,7 +35,8 @@ Warning: Since all of the free VIES API's are slow and somewhat unreliable the c
 
 ## Authors
 
-- Sander Mangel [@sandermangel](https://twitter.com/sandermangel)
+- Sander Mangel [Github](https://github.com/sandermangel) [Twitter](https://twitter.com/sandermangel)
+- Timon de Groot [Github](https://github.com/tdgroot) [Twitter](https://twitter.com/TimonGreat)
 
 ### Authors M1 Version
 
