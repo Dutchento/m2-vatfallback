@@ -6,15 +6,16 @@
 			<tab>vatfallback</tab>
 			<resource>Dutchento_Vatfallback::config_dutchento_vatfallback</resource>
 			<group id="vatfallback" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label">
-				<label>vatfallback</label>
+				<label>Vatfallback</label>
+				<comment>Vatfallback provides a more reliable way of validating VAT numbers by using both on- and offline fallback services</comment>
 				<field id="vatlayer_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="select">
-					<label>vatlayer_validation</label>
+					<label>Use Vatlayer service</label>
 					<comment/>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
 				<field id="vatlayer_apikey" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="text">
-					<label>vatlayer_apikey</label>
-					<comment/>
+					<label>Vatlayer API key</label>
+                    <comment><![CDATA[Register with <a href='https://vatlayer.com/product'>Vatlayer.com</a> to obtain an API key]]></comment>
 				</field>
 			</group>
 		</section>

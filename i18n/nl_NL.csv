@@ -1,1 +1,5 @@
-"string","stringtranslated"
+"Vatfallback","Vatfallback"
+"Vatfallback provides a more reliable way of validating VAT numbers by using both on- and offline fallback services","Vatfallback bied betrouwbare BTW nummer validatie door een aantal online en offline 'fallback' diensten"
+"Use Vatlayer service","Gebruik de Vatlayer service"
+"Vatlayer API key","Vatlayer API key"
+"Register with <a href='https://vatlayer.com/product'>Vatlayer.com</a> to obtain an API key","Registreer op <a href='https://vatlayer.com/product'>Vatlayer.com</a> om een key te verkrijgen"
