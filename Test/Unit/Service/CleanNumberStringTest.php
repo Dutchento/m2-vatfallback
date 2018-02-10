@@ -30,6 +30,7 @@ class CleanNumberStringTest extends \PHPUnit\Framework\TestCase
             ['NLNL163001688B01', 'NL163001688B01'],
             ['-NL163001688B01', 'NL163001688B01'],
             ['NL-16 300 16 88#B01', '163001688B01'],
+            ['BE 0123.456.789', '0123456789'],
         ];
     }
 }
