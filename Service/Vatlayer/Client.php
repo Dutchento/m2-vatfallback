@@ -14,9 +14,11 @@ use \Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Client
 {
-
     /** @var string */
     protected $vatlayerApiKey;
+
+    /** @var float */
+    protected $vatlayerTimeout;
 
     /**
      * Vatlayer constructor.
@@ -27,6 +29,10 @@ class Client
     ) {
         $this->vatlayerApiKey = (string)$scopeConfig->getValue(
             'customer/vatfallback/vatlayer_apikey',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        $this->vatlayerTimeout = (float)$scopeConfig->getValue(
+            'customer/vatfallback/vatlayer_timeout',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     }
@@ -45,7 +51,7 @@ class Client
             $client = new GuzzleClient(['base_uri' => 'http://apilayer.net']);
 
             $response = $client->request('GET', '/api/validate', [
-                'connect_timeout' => 1.5,
+                'connect_timeout' => max(1, $this->vatlayerTimeout),
                 'query' => [
                     'access_key' => $this->vatlayerApiKey,
                     'vat_number' => $countryIso2 . $vatNumber,

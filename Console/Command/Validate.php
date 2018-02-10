@@ -44,7 +44,7 @@ class Validate extends Command
         if ($result['result']) {
             $output->writeln("Success is: {$result['result']}, with service {$result['service']}");
         } else {
-            $output->writeln("Invalid VAT number");
+            $output->writeln("Invalid VAT number, with service {$result['service']}");
         }
     }
 

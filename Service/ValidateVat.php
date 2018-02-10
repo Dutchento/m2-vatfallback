@@ -53,16 +53,18 @@ class ValidateVat implements ValidateVatInterface
 
         // use the unofficial VIES api
         try {
-            return [
-                'result' => (bool)$this->viesService->validateVATNumber($cleanVatString, $countryIso2),
-                'service' => 'vies'
-            ];
+            if ((bool)$this->viesService->validateVATNumber($cleanVatString, $countryIso2)) {
+                return [
+                    'result' => true,
+                    'service' => 'vies'
+                ];
+            }
         } catch (FailedValidationException $error) {
             $this->logger->error("vatfallback VIES error: {$error->getMessage()}");
         }
 
         // use the Vatlayer api
-        try {
+        try { // if VIES failed or indicates invalid recheck with vatlayer. VIES is sometimes incorrect
             return [
                 'result' => (bool)$this->vatLayerService->validateVATNumber($cleanVatString, $countryIso2),
                 'service' => 'vatlayer'
@@ -71,7 +73,7 @@ class ValidateVat implements ValidateVatInterface
             $this->logger->error("vatfallback Vatlayer error: {$error->getMessage()}");
         }
 
-        // offline Regex validation
+        // offline Regex validation if all fails
         if ($this->regexService->validateVATNumber($cleanVatString, $countryIso2)) {
             return [
                 'result' => true,

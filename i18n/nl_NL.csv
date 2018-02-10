@@ -4,3 +4,6 @@
 "Use Vatlayer service","Gebruik de Vatlayer service"
 "Vatlayer API key","Vatlayer API key"
 "Register with <a href='https://vatlayer.com/product'>Vatlayer.com</a> to obtain an API key","Registreer op <a href='https://vatlayer.com/product'>Vatlayer.com</a> om een key te verkrijgen"
+"The lower the less likely to get a hit, more will add to page request time in API, checkout","Minder seconden is minder kans op een succesvolle verbinding, meer voegt pageload tijd toe aan de API en checkout"
+"Vatlayer API timeout (seconds)","Vatlayer API timeout (in seconden)"
+"VIES API timeout (seconds)","VIES API timeout (in seconden)"

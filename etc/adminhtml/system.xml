@@ -13,6 +13,10 @@
 					<comment/>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
+                <field id="vies_timeout" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="text">
+                    <label>VIES API timeout (seconds)</label>
+                    <comment><![CDATA[Timeout in seconds for connecting to the VIES API. The lower the less likely to get a hit, more will add to checkout time]]></comment>
+                </field>
 				<field id="vatlayer_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="select">
 					<label>Use Vatlayer service</label>
 					<comment/>
@@ -21,6 +25,10 @@
 				<field id="vatlayer_apikey" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="text">
 					<label>Vatlayer API key</label>
                     <comment><![CDATA[Register with <a href='https://vatlayer.com/product'>Vatlayer.com</a> to obtain an API key]]></comment>
+				</field>
+				<field id="vatlayer_timeout" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="text">
+					<label>Vatlayer API timeout (seconds)</label>
+                    <comment><![CDATA[The lower the less likely to get a hit, more will add to page request time in API, checkout]]></comment>
 				</field>
 			</group>
 		</section>

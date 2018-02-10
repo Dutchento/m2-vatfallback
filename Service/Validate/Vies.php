@@ -18,6 +18,9 @@ class Vies implements ValidationServiceInterface
     /** @var bool */
     protected $viesIsEnabled;
 
+    /** @var float */
+    protected $viesTimeout;
+
     /** @var ScopeConfigInterface  */
     protected $scopeConfig;
 
@@ -31,6 +34,10 @@ class Vies implements ValidationServiceInterface
         $this->scopeConfig = $scopeConfig;
         $this->viesIsEnabled = (bool)$scopeConfig->getValue(
             'customer/vatfallback/vies_validation',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        $this->viesTimeout = (float)$scopeConfig->getValue(
+            'customer/vatfallback/vatlayer_timeout',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     }
@@ -51,7 +58,7 @@ class Vies implements ValidationServiceInterface
             $client = new Client(['base_uri' => 'http://ec.europa.eu']);
 
             $response = $client->request('GET', '/taxation_customs/vies/viesquer.do', [
-                'connect_timeout' => 1.5,
+                'connect_timeout' => max(1, $this->viesTimeout),
                 'query' => [
                     'ms' => $countryIso2,
                     'iso' => $countryIso2,
