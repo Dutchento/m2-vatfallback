@@ -75,7 +75,7 @@ class Vies implements ValidationServiceInterface
         }
 
         // body of API contains a valid flag
-        return (false !== strpos($response->getBody()->getContents(), 'validStyle'));
+        return (false !== strpos($response->getBody()->getContents(), 'Yes, valid VAT number'));
     }
 
     /**

@@ -26,6 +26,8 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 - Magento 2.2 Community & Commerce
 
 ## Changelog
+[1.1.1] fixed a logic error in calling fallback services including a false positives fix for the unofficial VIES endpoint by Laura Folco
+
 [1.1.0] add an API endpoint for company data
 
 [1.0.0] ported version of the Magento 1 module
@@ -47,3 +49,4 @@ Warning: Since all of the free VIES API's are slow and somewhat unreliable the c
 
 - Sander Mangel [@sandermangel](https://twitter.com/sandermangel)
 - Peter Jaap Blaakmeer [@peterjaap](https://twitter.com/peterjaap)
+- Laura Folco [@lfolco](https://twitter.com/lfolco)
