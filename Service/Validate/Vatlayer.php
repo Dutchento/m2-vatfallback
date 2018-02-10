@@ -9,7 +9,7 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
-use GuzzleHttp\Client;
+use Dutchento\Vatfallback\Service\Vatlayer\Client as VatlayerClient;
 use \Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Vatlayer implements ValidationServiceInterface
@@ -20,13 +20,18 @@ class Vatlayer implements ValidationServiceInterface
     /** @var string */
     protected $vatlayerApiKey;
 
+    /** @var VatlayerClient  */
+    protected $vatlayerClient;
+
     /**
      * Vatlayer constructor.
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        VatlayerClient $vatlayerClient
     ) {
+        $this->vatlayerClient = $vatlayerClient;
         $this->vatlayerIsEnabled = (bool)$scopeConfig->getValue(
             'customer/vatfallback/vatlayer_validation',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
@@ -50,34 +55,11 @@ class Vatlayer implements ValidationServiceInterface
 
         // call API layer endpoint
         try {
-            $client = new Client(['base_uri' => 'http://apilayer.net']);
-
-            $response = $client->request('GET', '/api/validate', [
-                'connect_timeout' => 1.5,
-                'query' => [
-                    'access_key' => $this->vatlayerApiKey,
-                    'vat_number' => $countryIso2 . $vatNumber,
-                    'format' => 1
-                ]
-            ]);
+            $clientResponse = $this->vatlayerClient->retrieveVatnumberEndpoint($vatNumber, $countryIso2);
         } catch (\Exception $error) {
             throw new FailedValidationException("HTTP error {$error->getMessage()}");
         }
 
-        // did we get a valid statuscode
-        if ($response->getStatusCode() > 299) {
-            throw new FailedValidationException(
-                "Vatlayer API responded with status {$response->getStatusCode()}, 
-                body {$response->getBody()->getContents()}"
-            );
-        }
-
-        // Response body should be JSON
-        $validationResult = json_decode($response->getBody()->getContents(), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new FailedValidationException("No valid JSON response, body {$response->getBody()->getContents()}");
-        }
-
-        return (bool)$validationResult['valid'];
+        return (bool)$clientResponse['valid'];
     }
 }
