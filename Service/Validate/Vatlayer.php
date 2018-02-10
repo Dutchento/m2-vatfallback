@@ -9,41 +9,67 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
+use GuzzleHttp\Client;
+use \Magento\Framework\App\Config\ScopeConfigInterface;
+
 class Vatlayer implements ValidationServiceInterface
 {
+    /** @var bool */
+    protected $vatlayerIsEnabled;
+
+    /** @var string */
+    protected $vatlayerApiKey;
+
+    /**
+     * Vatlayer constructor.
+     * @param ScopeConfigInterface $scopeConfig
+     */
+    public function __construct(
+        ScopeConfigInterface $scopeConfig
+    )
+    {
+        $this->vatlayerIsEnabled = (bool)$scopeConfig->getValue('customer/vatfallback/vatlayer_validation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $this->vatlayerApiKey = (string)$scopeConfig->getValue('customer/vatfallback/vatlayer_apikey', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
     /**
      * @inheritdoc
+     * @throws \Dutchento\Vatfallback\Service\Validate\FailedValidationException
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
-        if(!$accessKey = $this->config->getConfigVatLayerApiToken()) { // no api token set in config
+        // check if service is enabled and configured
+        if (!$this->vatlayerIsEnabled || '' === $this->vatlayerApiKey) {
             return false;
         }
 
-        $curlHandle = curl_init('http://apilayer.net/api/validate?' . http_build_query([
-            'access_key' => $accessKey,
-            'vat_number' => $countryIso2 . $vatNumber,
-            'format' => 1
-        ]));
+        // call API layer endpoint
+        try {
+            $client = new Client(['base_uri' => 'http://apilayer.net']);
 
-        // could not create a cURL request
-        if(!$curlHandle) {
-            return false;
+            $response = $client->request('GET', '/api/validate', [
+                'connect_timeout' => 1.5,
+                'query' => [
+                    'access_key' => $this->vatlayerApiKey,
+                    'vat_number' => $countryIso2 . $vatNumber,
+                    'format' => 1
+                ]
+            ]);
+        } catch (\Exception $error) {
+            throw new FailedValidationException("HTTP error {$error->getMessage()}");
         }
 
-        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
-        $json = curl_exec($curlHandle);
-        curl_close($curlHandle);
-
-        $validationResult = json_decode($json, true);
-        if(json_last_error() !== JSON_ERROR_NONE) { // no valid JSON output form the API
-            return false;
+        // did we get a valid statuscode
+        if ($response->getStatusCode() > 299) {
+            throw new FailedValidationException("Vatlayer API responded with status {$response->getStatusCode()}, body {$response->getBody()->getContents()}");
         }
 
-        if(isset($validationResult['valid'])) { // JSON contains a valid flag
-            return (bool)$validationResult['valid'];
+        // Response body should be JSON
+        $validationResult = json_decode($response->getBody()->getContents(), true);
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            throw new FailedValidationException("No valid JSON response, body {$response->getBody()->getContents()}");
         }
 
-        return false;
+        return (bool)$validationResult['valid'];
     }
 }

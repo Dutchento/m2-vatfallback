@@ -1,21 +1,20 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
 	<system>
-		<section id="customer" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+		<section id="customer" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label">
 			<label>customer</label>
 			<tab>vatfallback</tab>
 			<resource>Dutchento_Vatfallback::config_dutchento_vatfallback</resource>
-			<group id="vatfallback" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+			<group id="vatfallback" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label">
 				<label>vatfallback</label>
-				<field id="isvat_validation" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
-					<label>isvat_validation</label>
+				<field id="vatlayer_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="select">
+					<label>vatlayer_validation</label>
 					<comment/>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-				<field id="regex_validation" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
-					<label>regex_validation</label>
+				<field id="vatlayer_apikey" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="text">
+					<label>vatlayer_apikey</label>
 					<comment/>
-					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
 			</group>
 		</section>

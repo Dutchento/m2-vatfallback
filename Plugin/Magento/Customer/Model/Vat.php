@@ -14,7 +14,31 @@ use Magento\Framework\DataObject;
 
 class Vat
 {
+    /** @var \Dutchento\Vatfallback\Service\ValidateVatInterface  */
+    private $validationService;
 
+    /**
+     * Vat constructor.
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param ValidateVatInterface $validationService
+     */
+    public function __construct(
+        \Psr\Log\LoggerInterface $logger,
+        ValidateVatInterface $validationService
+    )
+    {
+        $this->validationService = $validationService;
+    }
+
+    /**
+     * @param \Magento\Customer\Model\Vat $subject
+     * @param callable $proceed
+     * @param $countryCode
+     * @param $vatNumber
+     * @param $requesterCountryCode
+     * @param $requesterVatNumber
+     * @return DataObject
+     */
     public function aroundCheckVatNumber(
         \Magento\Customer\Model\Vat $subject,
         callable $proceed,
@@ -32,8 +56,7 @@ class Vat
             return $gatewayResponse;
         }
 
-        $validateService = new ValidateVat();
-        $response = $validateService->byNumberAndCountry($vatNumber, $countryCode);
+        $response = $this->validationService->byNumberAndCountry($vatNumber, $countryCode);
 
         return $response ?
             $this->createGatewayResponseObject($vatNumber, true, __('VAT Number is valid.')) :
