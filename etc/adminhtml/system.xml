@@ -8,6 +8,11 @@
 			<group id="vatfallback" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label">
 				<label>Vatfallback</label>
 				<comment>Vatfallback provides a more reliable way of validating VAT numbers by using both on- and offline fallback services</comment>
+				<field id="vies_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="select">
+					<label>Use unofficial VIES service</label>
+					<comment/>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
 				<field id="vatlayer_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="select">
 					<label>Use Vatlayer service</label>
 					<comment/>

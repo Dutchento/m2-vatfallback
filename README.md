@@ -8,7 +8,7 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 ## Supported services
 
 - Built in Magento VIES check
-- Custom VIES check
+- Custom VIES check (this is not the official endpoint but an internal one)
 - vatlayer.com check
 - Regex fallback check for following countries; AT, BE, CZ, DE, CY, DK, EE, GR, ES, FI, FR, GB, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, SE, SI, SK
 

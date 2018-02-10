@@ -16,10 +16,7 @@ use Magento\Store\Model\Information as StoreInformation;
 class Vies implements ValidationServiceInterface
 {
     /** @var bool */
-    protected $vatlayerIsEnabled;
-
-    /** @var string */
-    protected $vatlayerApiKey;
+    protected $viesIsEnabled;
 
     /** @var ScopeConfigInterface  */
     protected $scopeConfig;
@@ -32,12 +29,8 @@ class Vies implements ValidationServiceInterface
         ScopeConfigInterface $scopeConfig
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->vatlayerIsEnabled = (bool)$scopeConfig->getValue(
-            'customer/vatfallback/vatlayer_validation',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
-        $this->vatlayerApiKey = (string)$scopeConfig->getValue(
-            'customer/vatfallback/vatlayer_apikey',
+        $this->viesIsEnabled = (bool)$scopeConfig->getValue(
+            'customer/vatfallback/vies_validation',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     }
@@ -48,6 +41,11 @@ class Vies implements ValidationServiceInterface
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
+        // check if service is enabled and configured
+        if (!$this->viesIsEnabled) {
+            return false;
+        }
+
         // call API layer endpoint
         try {
             $client = new Client(['base_uri' => 'http://ec.europa.eu']);
