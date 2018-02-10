@@ -38,9 +38,9 @@ Warning: Since all of the free VIES API's are slow and somewhat unreliable the c
 
 ## Authors
 
-- Sander Mangel [@sandermagenl](https://twitter.com/sandermangel)
+- Sander Mangel [@sandermangel](https://twitter.com/sandermangel)
 
 ### Authors M1 Version
 
-- Sander Mangel [@sandermagenl](https://twitter.com/sandermangel)
+- Sander Mangel [@sandermangel](https://twitter.com/sandermangel)
 - Peter Jaap Blaakmeer [@peterjaap](https://twitter.com/peterjaap)
