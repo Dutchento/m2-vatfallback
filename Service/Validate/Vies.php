@@ -37,7 +37,7 @@ class Vies implements ValidationServiceInterface
 
     /**
      * @inheritdoc
-     * @throws \Dutchento\Vatfallback\Service\Validate\FailedValidationException
+     * @throws FailedValidationException
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {

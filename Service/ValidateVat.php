@@ -12,29 +12,35 @@ namespace Dutchento\Vatfallback\Service;
 use Dutchento\Vatfallback\Service\Validate\FailedValidationException;
 use Dutchento\Vatfallback\Service\Validate\Regex;
 use Dutchento\Vatfallback\Service\Validate\Vatlayer;
-use \Magento\Framework\App\Config\ScopeConfigInterface;
+use Dutchento\Vatfallback\Service\Validate\Vies;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Psr\Log\LoggerInterface;
 
 class ValidateVat implements ValidateVatInterface
 {
-    /** @var \Psr\Log\LoggerInterface  */
+    /** @var LoggerInterface  */
     protected $logger;
     /** @var Vatlayer */
     protected $vatLayerService;
+    /** @var Vies */
+    protected $viesService;
     /** @var Regex */
     protected $regexService;
 
     /**
      * Vat constructor.
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param LoggerInterface $logger
      * @param Vatlayer $vatLayerService
      */
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
+        LoggerInterface $logger,
         Vatlayer $vatLayerService,
+        Vies $viesService,
         Regex $regexService
     ) {
         $this->logger = $logger;
         $this->vatLayerService = $vatLayerService;
+        $this->viesService = $viesService;
         $this->regexService = $regexService;
     }
 
@@ -44,6 +50,18 @@ class ValidateVat implements ValidateVatInterface
     public function byNumberAndCountry(string $vatInput, string $countryIso2): array
     {
         $cleanVatString = (new CleanNumberString())->returnStrippedString($vatInput);
+
+        // use the unofficial VIES api
+        try {
+            if ($this->viesService->validateVATNumber($cleanVatString, $countryIso2)) {
+                return [
+                    'result' => true,
+                    'service' => 'vies'
+                ];
+            }
+        } catch (FailedValidationException $error) {
+            $this->logger->error("vatfallback VIES error: {$error->getMessage()}");
+        }
 
         // use the Vatlayer api
         try {

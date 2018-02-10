@@ -12,10 +12,11 @@ namespace Dutchento\Vatfallback\Plugin\Magento\Customer\Model;
 use Dutchento\Vatfallback\Service\ValidateVat;
 use Dutchento\Vatfallback\Service\ValidateVatInterface;
 use Magento\Framework\DataObject;
+use Magento\Customer\Model\Vat as MagentoVat;
 
 class Vat
 {
-    /** @var \Dutchento\Vatfallback\Service\ValidateVatInterface  */
+    /** @var ValidateVatInterface  */
     private $validationService;
 
     /**
@@ -29,7 +30,7 @@ class Vat
     }
 
     /**
-     * @param \Magento\Customer\Model\Vat $subject
+     * @param MagentoVat $subject
      * @param callable $proceed
      * @param $countryCode
      * @param $vatNumber
@@ -38,7 +39,7 @@ class Vat
      * @return DataObject
      */
     public function aroundCheckVatNumber(
-        \Magento\Customer\Model\Vat $subject,
+        MagentoVat $subject,
         callable $proceed,
         $countryCode,
         $vatNumber,
