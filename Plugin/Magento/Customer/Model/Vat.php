@@ -58,7 +58,7 @@ class Vat
 
         $response = $this->validationService->byNumberAndCountry($vatNumber, $countryCode);
 
-        return $response ?
+        return $response['result'] ?
             $this->createGatewayResponseObject($vatNumber, true, __('VAT Number is valid.')) :
             $this->createGatewayResponseObject($vatNumber, false, __('Please enter a valid VAT number.')) ;
     }
