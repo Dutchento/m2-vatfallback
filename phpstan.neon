@@ -1,6 +1,0 @@
-parameters:
-	ignoreErrors:
-		- '#Function __ not found#'
-		- '#Call to an undefined method Magento\\Framework\\DataObject#'
-	excludes_analyse:
-		- %currentWorkingDirectory%/Test/*
