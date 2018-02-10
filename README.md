@@ -26,6 +26,8 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 - Magento 2.2 Community & Commerce
 
 ## Changelog
+[1.1.0] add an API endpoint for company data
+
 [1.0.0] ported version of the Magento 1 module
 
 ## Requirements
