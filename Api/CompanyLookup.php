@@ -13,7 +13,7 @@ use Dutchento\Vatfallback\Service\CleanNumberString;
 use Dutchento\Vatfallback\Service\Vatlayer\Client as VatlayerClient;
 use Psr\Log\LoggerInterface;
 
-class VatlayerCompanyLookup implements VatlayerCompanyLookupInterface
+class CompanyLookup implements CompanyLookupInterface
 {
     /** @var VatlayerClient */
     protected $vatlayerClient;
@@ -22,7 +22,7 @@ class VatlayerCompanyLookup implements VatlayerCompanyLookupInterface
     protected $logger;
 
     /**
-     * VatlayerCompanyLookup constructor.
+     * CompanyLookup constructor.
      * @param VatlayerClient $vatlayerClient
      */
     public function __construct(
@@ -50,7 +50,7 @@ class VatlayerCompanyLookup implements VatlayerCompanyLookupInterface
                 'country' => $response['country_code'] ?? 'Unknown',
                 'company_name' => $response['company_name'] ?? 'Unknown',
                 'company_address' => $response['company_address'] ?? 'Unknown',
-                'message' => $response['error']['message'] ?? $message,
+                'message' => $response['error']['message'] ?? '',
             ];
         } catch (\Exception $exception) {
             $this->logger->error($exception->getMessage());

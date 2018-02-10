@@ -15,8 +15,11 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 ## How it works
 A plugin wraps the existing Vat check in Magento Customer implementing various services as fallback
 
-Or use the console task:
+Use the console task:
 `./bin/magento vat:validate NL NL133001477B01`
+
+Use the API endpoint to get company data by VAT number
+`http://domain.com/rest/V1/vat/companylookup/NL133001477B01`
 
 ## Compatibility
 

@@ -9,7 +9,7 @@
 
 namespace Dutchento\Vatfallback\Api;
 
-interface VatlayerCompanyLookupInterface
+interface CompanyLookupInterface
 {
     /**
      * Returns company data using the Vatlayer API

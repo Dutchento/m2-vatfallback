@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
-    <route url="/V1/vat/vatlayercompanylookup/:vatNumber" method="GET">
-        <service class="Dutchento\Vatfallback\Api\VatlayerCompanyLookupInterface" method="byVatnumber"/>
+    <route url="/V1/vat/companylookup/:vatNumber" method="GET">
+        <service class="Dutchento\Vatfallback\Api\CompanyLookupInterface" method="byVatnumber"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>
