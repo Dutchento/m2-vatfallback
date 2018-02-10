@@ -27,10 +27,15 @@ class Vatlayer implements ValidationServiceInterface
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig
-    )
-    {
-        $this->vatlayerIsEnabled = (bool)$scopeConfig->getValue('customer/vatfallback/vatlayer_validation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $this->vatlayerApiKey = (string)$scopeConfig->getValue('customer/vatfallback/vatlayer_apikey', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    ) {
+        $this->vatlayerIsEnabled = (bool)$scopeConfig->getValue(
+            'customer/vatfallback/vatlayer_validation',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        $this->vatlayerApiKey = (string)$scopeConfig->getValue(
+            'customer/vatfallback/vatlayer_apikey',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
     }
 
     /**
@@ -61,7 +66,10 @@ class Vatlayer implements ValidationServiceInterface
 
         // did we get a valid statuscode
         if ($response->getStatusCode() > 299) {
-            throw new FailedValidationException("Vatlayer API responded with status {$response->getStatusCode()}, body {$response->getBody()->getContents()}");
+            throw new FailedValidationException(
+                "Vatlayer API responded with status {$response->getStatusCode()}, 
+                body {$response->getBody()->getContents()}"
+            );
         }
 
         // body of API contains a valid flag

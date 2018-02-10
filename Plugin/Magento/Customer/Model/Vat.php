@@ -25,8 +25,7 @@ class Vat
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         ValidateVatInterface $validationService
-    )
-    {
+    ) {
         $this->validationService = $validationService;
     }
 
@@ -46,8 +45,7 @@ class Vat
         $vatNumber,
         $requesterCountryCode,
         $requesterVatNumber
-    ): DataObject
-    {
+    ): DataObject {
         /** @var DataObject $gatewayResponse */
         $gatewayResponse = $proceed($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber);
 

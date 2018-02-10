@@ -199,5 +199,4 @@ class RegexTest extends TestCase
             ['SKA999999999'],
         ];
     }
-
 }

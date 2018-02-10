@@ -14,7 +14,6 @@ use Dutchento\Vatfallback\Service\Validate\Regex;
 use Dutchento\Vatfallback\Service\Validate\Vatlayer;
 use \Magento\Framework\App\Config\ScopeConfigInterface;
 
-
 class ValidateVat implements ValidateVatInterface
 {
     /** @var \Psr\Log\LoggerInterface  */
@@ -33,8 +32,7 @@ class ValidateVat implements ValidateVatInterface
         \Psr\Log\LoggerInterface $logger,
         Vatlayer $vatLayerService,
         Regex $regexService
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->vatLayerService = $vatLayerService;
         $this->regexService = $regexService;
