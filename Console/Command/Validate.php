@@ -41,7 +41,11 @@ class Validate extends Command
 
         $result = $this->validationService->byNumberAndCountry($number, $country);
 
-        $output->writeln(var_export($result, true));
+        if ($result['result']) {
+            $output->writeln("Success is: {$result['result']}, with service {$result['service']}");
+        } else {
+            $output->writeln("Invalid VAT number");
+        }
     }
 
     /**
