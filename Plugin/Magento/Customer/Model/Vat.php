@@ -10,6 +10,7 @@
 namespace Dutchento\Vatfallback\Plugin\Magento\Customer\Model;
 
 use Dutchento\Vatfallback\Service\ValidateVat;
+use Dutchento\Vatfallback\Service\ValidateVatInterface;
 use Magento\Framework\DataObject;
 
 class Vat
@@ -19,11 +20,9 @@ class Vat
 
     /**
      * Vat constructor.
-     * @param \Psr\Log\LoggerInterface $logger
      * @param ValidateVatInterface $validationService
      */
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
         ValidateVatInterface $validationService
     ) {
         $this->validationService = $validationService;
@@ -51,6 +50,12 @@ class Vat
 
         // if the result is false we start trying the fallback
         if ($gatewayResponse->getRequestSuccess() !== false) {
+            return $gatewayResponse;
+        }
+
+        // should we even be checking for VAT?
+        // this check is duplicated in the original checkVatNumber call
+        if (!$subject->canCheckVatNumber($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber)) {
             return $gatewayResponse;
         }
 

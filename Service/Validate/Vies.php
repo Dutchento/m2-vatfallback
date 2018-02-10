@@ -13,13 +13,16 @@ use GuzzleHttp\Client;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\Information as StoreInformation;
 
-class Vatlayer implements ValidationServiceInterface
+class Vies implements ValidationServiceInterface
 {
     /** @var bool */
     protected $vatlayerIsEnabled;
 
     /** @var string */
     protected $vatlayerApiKey;
+
+    /** @var ScopeConfigInterface  */
+    protected $scopeConfig;
 
     /**
      * Vatlayer constructor.
@@ -28,6 +31,7 @@ class Vatlayer implements ValidationServiceInterface
     public function __construct(
         ScopeConfigInterface $scopeConfig
     ) {
+        $this->scopeConfig = $scopeConfig;
         $this->vatlayerIsEnabled = (bool)$scopeConfig->getValue(
             'customer/vatfallback/vatlayer_validation',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE

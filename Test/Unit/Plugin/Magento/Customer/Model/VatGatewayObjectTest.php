@@ -13,10 +13,9 @@ class VatGatewayObjectTest extends TestCase
 
     public function setUp()
     {
-        $mockLogger = $this->createMock(LoggerInterface::class);
         $mockValidateVatService = $this->createMock(ValidateVatInterface::class);
 
-        $this->vatPlugin = new Vat($mockLogger, $mockValidateVatService);
+        $this->vatPlugin = new Vat($mockValidateVatService);
     }
 
     public function testCreatingSuccesfulGatewayObject()
