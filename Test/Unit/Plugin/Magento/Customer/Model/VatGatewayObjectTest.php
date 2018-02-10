@@ -3,15 +3,25 @@
 namespace Dutchento\Vatfallback\Test\Unit\Plugin\Magento\Customer\Model;
 
 use Dutchento\Vatfallback\Plugin\Magento\Customer\Model\Vat;
+use Dutchento\Vatfallback\Service\ValidateVatInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class VatGatewayObjectTest extends TestCase
 {
+    protected $vatPlugin;
+
+    public function setUp()
+    {
+        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockValidateVatService = $this->createMock(ValidateVatInterface::class);
+
+        $this->vatPlugin = new Vat($mockLogger, $mockValidateVatService);
+    }
+
     public function testCreatingSuccesfulGatewayObject()
     {
-        $plugin = new Vat();
-
-        $object = $plugin->createGatewayResponseObject('VATNUMBER', true, 'message');
+        $object = $this->vatPlugin->createGatewayResponseObject('VATNUMBER', true, 'message');
 
         $this->assertEquals((new \DateTimeImmutable())->format('Y-m-d'), $object->getRequestDate());
         $this->assertEquals('VATNUMBER', $object->getRequestIdentifier());
@@ -22,9 +32,7 @@ class VatGatewayObjectTest extends TestCase
 
     public function testCreatingFailedGatewayObject()
     {
-        $plugin = new Vat();
-
-        $object = $plugin->createGatewayResponseObject('VATNUMBER', false, 'message');
+        $object = $this->vatPlugin->createGatewayResponseObject('VATNUMBER', false, 'message');
 
         $this->assertEquals((new \DateTimeImmutable())->format('Y-m-d'), $object->getRequestDate());
         $this->assertEquals('VATNUMBER', $object->getRequestIdentifier());
