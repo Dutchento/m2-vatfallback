@@ -20,10 +20,7 @@ Or use the console task:
 
 ## Compatibility
 
-Tested on Mage Community & Commerce 2.2
-
-## Magento 2
-The Magento 2 version is currently under development here: [https://github.com/Dutchento/m2-vatfallback](https://github.com/Dutchento/m2-vatfallback)
+- Magento 2.2 Community & Commerce
 
 ## Changelog
 [1.0.0] ported version of the Magento 1 module
