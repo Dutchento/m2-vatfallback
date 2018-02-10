@@ -9,28 +9,37 @@
 
 namespace Dutchento\Vatfallback\Plugin\Magento\Customer\Model;
 
-use Dutchento\Vatfallback\Service\ValidateVat;
+use Dutchento\Vatfallback\Service\CleanNumberString;
 use Dutchento\Vatfallback\Service\ValidateVatInterface;
+use Magento\Customer\Model\Vat as Subject;
 use Magento\Framework\DataObject;
-use Magento\Customer\Model\Vat as MagentoVat;
 
 class Vat
 {
-    /** @var ValidateVatInterface  */
+    /** @var ValidateVatInterface */
     private $validationService;
+
+    /**
+     * @var CleanNumberString
+     */
+    private $cleanNumberService;
 
     /**
      * Vat constructor.
      * @param ValidateVatInterface $validationService
+     * @param CleanNumberString $cleanNumberService
      */
     public function __construct(
-        ValidateVatInterface $validationService
-    ) {
+        ValidateVatInterface $validationService,
+        CleanNumberString $cleanNumberService
+    )
+    {
         $this->validationService = $validationService;
+        $this->cleanNumberService = $cleanNumberService;
     }
 
     /**
-     * @param MagentoVat $subject
+     * @param Subject $subject
      * @param callable $proceed
      * @param $countryCode
      * @param $vatNumber
@@ -39,23 +48,31 @@ class Vat
      * @return DataObject
      */
     public function aroundCheckVatNumber(
-        MagentoVat $subject,
+        Subject $subject,
         callable $proceed,
         $countryCode,
         $vatNumber,
-        $requesterCountryCode,
-        $requesterVatNumber
-    ): DataObject {
+        $requesterCountryCode = '',
+        $requesterVatNumber = ''
+    ): DataObject
+    {
+        /*
+         * Clean the vat number before running the core vat check.
+         * For example, a vat number like 'BE 0123.456.789' would return false,
+         * while '0123456789' would return true.
+         */
+        $vatNumber = $this->cleanNumberService->returnStrippedString($vatNumber);
+
         /** @var DataObject $gatewayResponse */
         $gatewayResponse = $proceed($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber);
 
-        // if the result is false we start trying the fallback
+        // If the result is false we start trying the fallback
         if ($gatewayResponse->getRequestSuccess() !== false) {
             return $gatewayResponse;
         }
 
-        // should we even be checking for VAT?
-        // this check is duplicated in the original checkVatNumber call
+        // Should we even be checking for VAT?
+        // This check is duplicated in the original checkVatNumber call
         if (!$subject->canCheckVatNumber($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber)) {
             return $gatewayResponse;
         }
@@ -64,12 +81,13 @@ class Vat
 
         return $response['result'] ?
             $this->createGatewayResponseObject($vatNumber, true, __('VAT Number is valid.')) :
-            $this->createGatewayResponseObject($vatNumber, false, __('Please enter a valid VAT number.')) ;
+            $this->createGatewayResponseObject($vatNumber, false, __('Please enter a valid VAT number.'));
     }
 
     /**
      * @param string $vatNumber
      * @param bool $success
+     * @param string $message
      * @return DataObject
      */
     public function createGatewayResponseObject(string $vatNumber, bool $success, string $message): DataObject
