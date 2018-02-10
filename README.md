@@ -12,13 +12,15 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 - vatlayer.com check
 - Regex fallback check for following countries; AT, BE, CZ, DE, CY, DK, EE, GR, ES, FI, FR, GB, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, SE, SI, SK
 
-## How it works
-A plugin wraps the existing Vat check in Magento Customer implementing various services as fallback
+## Features
+1) A plugin wraps the existing Vat check in Magento Customer implementing various services as fallback.
 
-Use the console task:
+2) Adds a validation when saving a customer address
+
+3) Use the console task:
 `./bin/magento vat:validate NL NL133001477B01`
 
-Use the API endpoint to get company data by VAT number
+4) Use the API endpoint to get company data by VAT number
 `http://domain.com/rest/V1/vat/companylookup/NL133001477B01`
 
 ## Compatibility
