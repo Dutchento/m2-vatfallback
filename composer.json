@@ -9,6 +9,7 @@
         }
     ],
     "require": {
+        "magento/module-customer": "^101.0|^102.0",
         "guzzlehttp/guzzle": "^6.2"
     },
     "require-dev": {
