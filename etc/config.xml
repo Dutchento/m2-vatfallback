@@ -3,6 +3,10 @@
 	<default>
 		<customer>
 			<vatfallback>
+				<vies_validation>1</vies_validation>
+				<vies_timeout>2</vies_timeout>
+				<vatlayer_validation>0</vatlayer_validation>
+				<vatlayer_timeout>2</vatlayer_timeout>
 				<isvat_validation/>
 				<regex_validation/>
 			</vatfallback>
