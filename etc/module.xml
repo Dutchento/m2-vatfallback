@@ -1,4 +1,18 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-	<module name="Dutchento_Vatfallback" setup_version="1.0.0"/>
+	<module name="Dutchento_Vatfallback" setup_version="1.0.0">
+        <sequence>
+            <module name="Magento_Customer"/>
+        </sequence>
+    </module>
+	<default>
+		<customer>
+			<vatfallback>
+				<vies_validation>1</vies_validation>
+				<vies_timeout>2</vies_timeout>
+				<vatlayer_validation>0</vatlayer_validation>
+        <vatlayer_timeout>2</vatlayer_timeout>
+			</vatfallback>
+		</customer>
+	</default>
 </config>
