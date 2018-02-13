@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Dutchento Vatfallback
+ * Provides free VAT fallback mechanism
+ * Copyright (C) 2018 Dutchento
+ *
+ * MIT license applies to this software
+ */
+-->
+<!--
+- Based on rules in http://ec.europa.eu/taxation_customs/vies/faqvies.do
+- Source: https://ellislab.com/forums/viewthread/159799
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Dutchento_Vatfallback:etc/vat_numbers.xsd">
+    <vat_number id="at" countryCode="AT" example="ATU12345678">^U[0-9]{8}$</vat_number>
+    <vat_number id="be" countryCode="BE" example="BE0123456789">^[0]{0,1}[0-9]{9}$</vat_number>
+    <vat_number id="bg" countryCode="BG" example="BG1234567890">^[0-9]{9,10}$</vat_number>
+    <vat_number id="cz" countryCode="CZ" example="CZ1234567890">^[0-9]{8,10}$</vat_number>
+    <vat_number id="de" countryCode="DE" example="DE123456789">^[0-9]{9}$</vat_number>
+    <vat_number id="cy" countryCode="CY" example="CY12345678A">^[0-9]{8}[A-Z]$</vat_number>
+    <vat_number id="dk" countryCode="DK" example="DK12345678">^[0-9]{8}$</vat_number>
+    <vat_number id="ee" countryCode="EE" example="EE123456789">^[0-9]{9}$</vat_number>
+    <vat_number id="gr" countryCode="GR" example="GR123456789">^[0-9]{9}$</vat_number>
+    <vat_number id="el" countryCode="EL" example="EL123456789">^[0-9]{9}$</vat_number>
+    <vat_number id="es" countryCode="ES" example="ES12345678X">
+        ^([a-zA-Z]\d{7}[0-9])|([0-9]\d{7}[a-zA-Z])|([a-zA-Z]\d{7}[0-9a-zA-Z])$
+    </vat_number>
+    <vat_number id="fi" countryCode="FI" example="FI20774740">^[0-9]{8}$</vat_number>
+    <vat_number id="fr" countryCode="FR" example="FR40303265045">^[0-9A-Z]{2}[0-9]{9}$</vat_number>
+    <vat_number id="gb" countryCode="GB" example="GB980780684">
+        ^(([1-9]\d{8})|([1-9]\d{11})|(GD[1-9]\d{2})|(HA[1-9]\d{2}))$
+    </vat_number>
+    <vat_number id="hu" countryCode="HU" example="HU12345678">^[0-9]{8}$</vat_number>
+    <vat_number id="ie" countryCode="IE" example="IE6433435F">^[0-9][A-Z0-9\\+\\*][0-9]{5}[A-Z]$</vat_number>
+    <vat_number id="it" countryCode="IT" example="IT12345678901">^[0-9]{11}$</vat_number>
+    <vat_number id="lt" countryCode="LT" example="LT123456789">^([0-9]{9}|[0-9]{12})$</vat_number>
+    <vat_number id="lu" countryCode="LU" example="LU12345678">^[0-9]{8}$</vat_number>
+    <vat_number id="lv" countryCode="LV" example="LV12345679012">^[0-9]{11}$</vat_number>
+    <vat_number id="mt" countryCode="MT" example="MT12345678">^[0-9]{8}$</vat_number>
+    <vat_number id="nl" countryCode="NL" example="NL123456789B01">^[0-9]{9}B[0-9]{2}$</vat_number>
+    <vat_number id="pl" countryCode="PL" example="PL1234567890">^[0-9]{10}$</vat_number>
+    <vat_number id="pt" countryCode="PT" example="PT123456789">^[0-9]{9}$</vat_number>
+    <vat_number id="se" countryCode="SE" example="SE123456789012">^[0-9]{12}$</vat_number>
+    <vat_number id="si" countryCode="SI" example="SI12345678">^[0-9]{8}$</vat_number>
+    <vat_number id="sk" countryCode="SK" example="SK1234567890">^[0-9]{10}$</vat_number>
+</config>

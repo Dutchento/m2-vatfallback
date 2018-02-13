@@ -20,10 +20,13 @@ class ValidateVat implements ValidateVatInterface
 {
     /** @var LoggerInterface  */
     protected $logger;
+
     /** @var Vatlayer */
     protected $vatLayerService;
+
     /** @var Vies */
     protected $viesService;
+
     /** @var Regex */
     protected $regexService;
 
@@ -31,6 +34,8 @@ class ValidateVat implements ValidateVatInterface
      * Vat constructor.
      * @param LoggerInterface $logger
      * @param Vatlayer $vatLayerService
+     * @param Vies $viesService
+     * @param Regex $regexService
      */
     public function __construct(
         LoggerInterface $logger,
