@@ -11,9 +11,17 @@ namespace Dutchento\Vatfallback\Model\VatNumber\Config;
 
 use Magento\Framework\Config\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\Config\Data as MagentoData;
 
-class Data extends \Magento\Framework\Config\Data
+class Data extends MagentoData
 {
+    /**
+     * Data constructor.
+     * @param Reader $reader
+     * @param CacheInterface $cache
+     * @param string $cacheId
+     * @param SerializerInterface|null $serializer
+     */
     public function __construct(
         Reader $reader,
         CacheInterface $cache,

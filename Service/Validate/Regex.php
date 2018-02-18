@@ -14,14 +14,9 @@ use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
 class Regex implements ValidationServiceInterface
 {
     /**
-     * @var ConfigInterface
-     */
-    private $vatNumberConfig;
-
-    /**
      * @var array
      */
-    private $regexMap;
+    private $vatPatternMap = [];
 
     /**
      * Regex constructor.
@@ -29,7 +24,8 @@ class Regex implements ValidationServiceInterface
      */
     public function __construct(ConfigInterface $vatNumberConfig)
     {
-        $this->vatNumberConfig = $vatNumberConfig;
+        // get the patterns from the configuration
+        $this->vatPatternMap = $vatNumberConfig->get();
     }
 
     /**
@@ -37,36 +33,9 @@ class Regex implements ValidationServiceInterface
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
-        $regex = $this->getRegexMapping($countryIso2);
+        // as fallback use a pattern that always validates
+        $regex = $this->vatPatternMap[$countryIso2] ?? '.*' ;
 
         return (bool)preg_match($regex, $vatNumber);
-    }
-
-    /**
-     * Get regex by countryIso2
-     *
-     * @param string $countryIso2
-     * @return string
-     */
-    public function getRegexMapping(string $countryIso2): string
-    {
-        $mapping = $this->getRegexMap();
-
-        return $mapping[strtoupper($countryIso2)] ?? '';
-    }
-
-    /**
-     * @return array
-     */
-    public function getRegexMap(): array
-    {
-        if ($this->regexMap === null) {
-            $this->regexMap = $this->vatNumberConfig->get();
-            $this->regexMap = array_map(function ($vatNumber) {
-                return '/' . trim($vatNumber['pattern'], '/') . '/';
-            }, $this->regexMap);
-        }
-
-        return $this->regexMap;
     }
 }

@@ -21,10 +21,22 @@ use Magento\Framework\Config\ValidationStateInterface;
  */
 class Reader extends Filesystem
 {
+    /** @var array */
     protected $_idAttributes = [
         '/config/vat_number' => 'countryCode'
     ];
 
+    /**
+     * Reader constructor.
+     * @param FileResolverInterface $fileResolver
+     * @param Converter $converter
+     * @param SchemaLocator $schemaLocator
+     * @param ValidationStateInterface $validationState
+     * @param string $fileName
+     * @param array $idAttributes
+     * @param string $domDocumentClass
+     * @param string $defaultScope
+     */
     public function __construct(
         FileResolverInterface $fileResolver,
         Converter $converter,
@@ -32,7 +44,7 @@ class Reader extends Filesystem
         ValidationStateInterface $validationState,
         string $fileName = 'vat_numbers.xml',
         array $idAttributes = [],
-        string $domDocumentClass = Dom::class,
+        string $domDocumentClass = \Dom::class,
         string $defaultScope = 'global'
     ) {
         parent::__construct(
