@@ -11,5 +11,8 @@ namespace Dutchento\Vatfallback\Model\VatNumber;
 
 interface ConfigInterface
 {
+    /**
+     * @return array
+     */
     public function get(): array;
 }
