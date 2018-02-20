@@ -9,20 +9,25 @@
 
 namespace Dutchento\Vatfallback\Model\VatNumber;
 
-use Dutchento\Vatfallback\Model\VatNumber\Config\Data;
+use Dutchento\Vatfallback\Model\VatNumber\Config\DataInterface;
 
 class Config implements ConfigInterface
 {
-    /**
-     * @var Data
-     */
+    /** @var Data  */
     private $dataSource;
 
-    public function __construct(Data $dataSource)
+    /**
+     * Config constructor.
+     * @param Data $dataSource
+     */
+    public function __construct(DataInterface $dataSource)
     {
         $this->dataSource = $dataSource;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function get(): array
     {
         return $this->dataSource->get();

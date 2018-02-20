@@ -9,8 +9,6 @@
 
 namespace Dutchento\Vatfallback\Model\VatNumber\Config;
 
-use DOMDocument;
-use DOMNode;
 use Magento\Framework\Config\ConverterInterface;
 use Magento\Framework\Stdlib\BooleanUtils;
 
@@ -31,35 +29,40 @@ class Converter implements ConverterInterface
     }
 
     /**
-     * Convert config.
+     * Convert config creating an assoc array with the country code as key
+     * and the pattern and other properties as value
      *
-     * @param DOMDocument $source
+     * @param \DOMDocument $source
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function convert($source): array
     {
         $result = [];
 
-        /** @var DOMNode $vatNumberNode */
+        /** @var \DOMNode $vatNumberNode */
         foreach ($source->documentElement->childNodes as $vatNumberNode) {
-            if ($vatNumberNode->nodeType !== XML_ELEMENT_NODE
-                || !$this->booleanUtils->toBoolean($vatNumberNode->attributes->getNamedItem('active')->nodeValue ?? true)) {
-                continue;
-            }
-            $pattern = $vatNumberNode->textContent;
-            $id = $vatNumberNode->attributes->getNamedItem('id')->nodeValue;
-            $countryCode = strtoupper($vatNumberNode->attributes->getNamedItem('countryCode')->nodeValue);
-            $example = $vatNumberNode->attributes->getNamedItem('example')->nodeValue;
-
-            $pattern = trim($pattern);
-
-            $result[$countryCode] = [
-                'id' => $id,
-                'pattern' => $pattern,
-                'example' => $example,
-            ];
+            $countryCode = $vatNumberNode->attributes->getNamedItem('countryCode')->nodeValue;
+            $result[strtoupper($countryCode)] = $this->stripAndValidatePattern($vatNumberNode->textContent);
         }
 
         return $result;
+    }
+
+    /**
+     * Remove unwanted characters and validate regex
+     * @param string $pattern
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public function stripAndValidatePattern(string $pattern): string
+    {
+        $pattern = trim($vatNumberNode->textContent);
+        $pattern = '/' .trim($pattern, '/') . '/';
+        if (preg_match($pattern, null) === false) {
+            throw new \InvalidArgumentException("Regex pattern '{$pattern}' does not appear to be valid");
+        }
+
+        return $pattern;
     }
 }
