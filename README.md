@@ -26,6 +26,8 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 - Magento 2.2 Community & Commerce
 
 ## Changelog
+[1.3.0] Regex validation now configurable via XML. Improved tests and regex validation
+
 [1.2.0] added a timeout sys conf value for connecting to APIs
 
 [1.1.1] fixed a logic error in calling fallback services including a false positives fix for the unofficial VIES endpoint by Laura Folco
