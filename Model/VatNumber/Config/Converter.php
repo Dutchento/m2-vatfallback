@@ -9,8 +9,6 @@
 
 namespace Dutchento\Vatfallback\Model\VatNumber\Config;
 
-use DOMDocument;
-use DOMNode;
 use Magento\Framework\Config\ConverterInterface;
 use Magento\Framework\Stdlib\BooleanUtils;
 
@@ -34,7 +32,7 @@ class Converter implements ConverterInterface
      * Convert config creating an assoc array with the country code as key
      * and the pattern and other properties as value
      *
-     * @param DOMDocument $source
+     * @param \DOMDocument $source
      * @return array
      * @throws \InvalidArgumentException
      */

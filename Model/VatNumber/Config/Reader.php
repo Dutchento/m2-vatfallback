@@ -9,7 +9,6 @@
 
 namespace Dutchento\Vatfallback\Model\VatNumber\Config;
 
-use Magento\Framework\Config\Dom;
 use Magento\Framework\Config\FileResolverInterface;
 use Magento\Framework\Config\Reader\Filesystem;
 use Magento\Framework\Config\ValidationStateInterface;
