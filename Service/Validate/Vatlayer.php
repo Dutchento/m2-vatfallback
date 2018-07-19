@@ -59,6 +59,10 @@ class Vatlayer implements ValidationServiceInterface
         } catch (\Exception $error) {
             throw new FailedValidationException("HTTP error {$error->getMessage()}");
         }
+        
+        if (isset($clientResponse['error'])) {
+            throw new FailedValidationException($clientResponse['error']['info']);
+        }
 
         return (bool)$clientResponse['valid'];
     }
