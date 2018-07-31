@@ -9,7 +9,7 @@
 
 namespace Dutchento\Vatfallback\Model\VatNumber;
 
-use Dutchento\Vatfallback\Model\VatNumber\Config\DataInterface;
+use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
 
 class Config implements ConfigInterface
 {
