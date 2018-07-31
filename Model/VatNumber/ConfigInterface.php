@@ -12,7 +12,7 @@ namespace Dutchento\Vatfallback\Model\VatNumber;
 interface ConfigInterface
 {
     /**
-     * @return iterable
+     * @return array
      */
     public function getRegexMapping(): array;
 }
