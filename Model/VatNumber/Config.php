@@ -9,8 +9,6 @@
 
 namespace Dutchento\Vatfallback\Model\VatNumber;
 
-use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
-
 class Config implements ConfigInterface
 {
     /** @var Data  */
@@ -20,7 +18,7 @@ class Config implements ConfigInterface
      * Config constructor.
      * @param Data $dataSource
      */
-    public function __construct(DataInterface $dataSource)
+    public function __construct(ConfigInterface $dataSource)
     {
         $this->dataSource = $dataSource;
     }
