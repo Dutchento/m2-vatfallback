@@ -25,7 +25,7 @@ class Regex implements ValidationServiceInterface
     public function __construct(ConfigInterface $vatNumberConfig)
     {
         // get the patterns from the configuration
-        $this->vatPatternMap = $vatNumberConfig->get();
+        $this->vatPatternMap = $vatNumberConfig->getRegexMapping();
     }
 
     /**
