@@ -14,5 +14,5 @@ interface ConfigInterface
     /**
      * @return array
      */
-    public function get(): array;
+    public function getRegexMapping(): array;
 }
