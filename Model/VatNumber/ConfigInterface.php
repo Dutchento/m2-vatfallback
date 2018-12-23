@@ -6,7 +6,6 @@
  *
  * MIT license applies to this software
  */
-
 namespace Dutchento\Vatfallback\Model\VatNumber;
 
 interface ConfigInterface
@@ -14,5 +13,5 @@ interface ConfigInterface
     /**
      * @return array
      */
-    public function getRegexMapping(): array;
+    public function get(): array;
 }

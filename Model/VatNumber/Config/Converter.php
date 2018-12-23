@@ -42,6 +42,10 @@ class Converter implements ConverterInterface
 
         /** @var \DOMNode $vatNumberNode */
         foreach ($source->documentElement->childNodes as $vatNumberNode) {
+            if ($vatNumberNode->attributes === null) {
+                continue;
+            }
+
             $countryCode = $vatNumberNode->attributes->getNamedItem('countryCode')->nodeValue;
             $result[strtoupper($countryCode)] = $this->stripAndValidatePattern($vatNumberNode->textContent);
         }
