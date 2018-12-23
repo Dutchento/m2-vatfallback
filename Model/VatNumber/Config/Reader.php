@@ -12,6 +12,7 @@ namespace Dutchento\Vatfallback\Model\VatNumber\Config;
 use Magento\Framework\Config\FileResolverInterface;
 use Magento\Framework\Config\Reader\Filesystem;
 use Magento\Framework\Config\ValidationStateInterface;
+use Magento\Framework\Config\Dom;
 
 /**
  * Class Reader
@@ -43,7 +44,7 @@ class Reader extends Filesystem
         ValidationStateInterface $validationState,
         string $fileName = 'vat_numbers.xml',
         array $idAttributes = [],
-        string $domDocumentClass = \Dom::class,
+        string $domDocumentClass = Dom::class,
         string $defaultScope = 'global'
     ) {
         parent::__construct(
