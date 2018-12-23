@@ -26,7 +26,7 @@ class SchemaLocator implements SchemaLocatorInterface
      */
     public function __construct(ModuleReader $moduleReader)
     {
-        $this->schema = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Dutchento_Vatfallback') . 'vat_numbers.xsd';
+        $this->schema = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Dutchento_Vatfallback') . '/vat_numbers.xsd';
     }
 
     /**
