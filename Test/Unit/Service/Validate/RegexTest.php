@@ -9,8 +9,9 @@
 
 namespace Dutchento\Vatfallback\Test\Unit\Service\Validate;
 
-use PHPUnit\Framework\TestCase;
+use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
 use Dutchento\Vatfallback\Service\Validate\Regex;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class RegexTest
@@ -18,6 +19,25 @@ use Dutchento\Vatfallback\Service\Validate\Regex;
  */
 class RegexTest extends TestCase
 {
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigInterface
+     */
+    private $vatNumberConfigMock;
+
+    /**
+     * @var Regex
+     */
+    private $regex;
+
+    protected function setUp()
+    {
+        $this->vatNumberConfigMock = $this->createMock(ConfigInterface::class);
+        $this->vatNumberConfigMock->expects($this->any())
+            ->method('get')
+            ->willReturn($this->getRegexList());
+        $this->regex = new Regex($this->vatNumberConfigMock);
+    }
+
     /**
      * @dataProvider dataproviderValidNumbers
      * @param $vatNr
@@ -27,9 +47,7 @@ class RegexTest extends TestCase
         $countryCode = substr($vatNr, 0, 2);
         $vatNr = substr($vatNr, 2);
 
-        $regex = new Regex();
-
-        $this->assertTrue($regex->validateVATNumber($vatNr, $countryCode));
+        $this->assertTrue($this->regex->validateVATNumber($vatNr, $countryCode));
     }
 
     /**
@@ -41,9 +59,7 @@ class RegexTest extends TestCase
         $countryCode = substr($vatNr, 0, 2);
         $vatNr = substr($vatNr, 2);
 
-        $regex = new Regex();
-
-        $this->assertFalse($regex->validateVATNumber($vatNr, $countryCode));
+        $this->assertFalse($this->regex->validateVATNumber($vatNr, $countryCode));
     }
 
     /* Valid numbers */
@@ -52,6 +68,7 @@ class RegexTest extends TestCase
         return [
             ['ATU12345678'],
             ['BE0123456789'],
+            ['BG1234567890'],
             ['CZ12345678'],
             ['CZ123456789'],
             ['CZ1234567890'],
@@ -97,18 +114,27 @@ class RegexTest extends TestCase
             ['IE9S99999L'],
             ['IT12345678901'],
             ['LT999999999'],
+            ['LT123456789'],
+            ['LT123456789012'],
             ['LT999999999999'],
             ['LU99999999'],
             ['LU12345678'],
+            ['LV12345679012'],
             ['LV99999999999'],
             ['MT99999999'],
+            ['MT12345678'],
             ['NL123455789B01'],
             ['NL123455789B02'],
             ['NL123455789B10'],
+            ['PL1234567890'],
             ['PL9999999999'],
+            ['PT123456789'],
             ['PT999999999'],
+            ['SE123456789012'],
             ['SE999999999999'],
+            ['SI12345678'],
             ['SI99999999'],
+            ['SK1234567890'],
             ['SK9999999999'],
         ];
     }
@@ -208,6 +234,39 @@ class RegexTest extends TestCase
             ['SK999999999A'],
             ['SK9999A99999'],
             ['SKA999999999'],
+        ];
+    }
+
+    private function getRegexList()
+    {
+        return [
+            'AT' => '/^U[0-9]{8}$/',
+            'BE' => '/^[0]{0,1}[0-9]{9}$/',
+            'BG' => '/^[0-9]{9,10}$/',
+            'CZ' => '/^[0-9]{8,10}$/',
+            'DE' => '/^[0-9]{9}$/',
+            'CY' => '/^[0-9]{8}[A-Z]$/',
+            'DK' => '/^[0-9]{8}$/',
+            'EE' => '/^[0-9]{9}$/',
+            'GR' => '/^[0-9]{9}$/',
+            'EL' => '/^[0-9]{9}$/',
+            'ES' => '/^([a-zA-Z]\d{7}[0-9])|([0-9]\d{7}[a-zA-Z])|([a-zA-Z]\d{7}[0-9a-zA-Z])$/',
+            'FI' => '/^[0-9]{8}$/',
+            'FR' => '/^[0-9A-Z]{2}[0-9]{9}$/',
+            'GB' => '/^(([1-9]\d{8})|([1-9]\d{11})|(GD[1-9]\d{2})|(HA[1-9]\d{2}))$/',
+            'HU' => '/^[0-9]{8}$/',
+            'IE' => '/^[0-9][A-Z0-9\\+\\*][0-9]{5}[A-Z]$/',
+            'IT' => '/^[0-9]{11}$/',
+            'LT' => '/^([0-9]{9}|[0-9]{12})$/',
+            'LU' => '/^[0-9]{8}$/',
+            'LV' => '/^[0-9]{11}$/',
+            'MT' => '/^[0-9]{8}$/',
+            'NL' => '/^[0-9]{9}B[0-9]{2}$/',
+            'PL' => '/^[0-9]{10}$/',
+            'PT' => '/^[0-9]{9}$/',
+            'SE' => '/^[0-9]{12}$/',
+            'SI' => '/^[0-9]{8}$/',
+            'SK' => '/^[0-9]{10}$/',
         ];
     }
 }

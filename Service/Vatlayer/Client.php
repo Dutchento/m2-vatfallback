@@ -22,6 +22,9 @@ use RuntimeException;
  */
 class Client
 {
+    /** @var null | array */
+    protected static $validationResult;
+
     /** @var string */
     protected $vatlayerApiKey;
 
@@ -54,6 +57,10 @@ class Client
      */
     public function retrieveVatnumberEndpoint(string $vatNumber, string $countryIso2): array
     {
+        if (null !== self::$validationResult) {
+            return self::$validationResult;
+        }
+
         // call API layer endpoint
         try {
             $client = new GuzzleClient(['base_uri' => 'http://apilayer.net']);
@@ -79,11 +86,11 @@ class Client
         }
 
         // Response body should be JSON
-        $validationResult = json_decode($response->getBody()->getContents(), true);
+        self::$validationResult = json_decode($response->getBody()->getContents(), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new RuntimeException("No valid JSON response, body {$response->getBody()->getContents()}");
         }
 
-        return $validationResult;
+        return self::$validationResult;
     }
 }

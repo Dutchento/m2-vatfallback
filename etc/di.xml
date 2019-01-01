@@ -1,7 +1,8 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-	<preference for="Dutchento\Vatfallback\Service\ValidateVatInterface" type="Dutchento\Vatfallback\Service\ValidateVat" />
 	<preference for="Dutchento\Vatfallback\Api\CompanyLookupInterface" type="Dutchento\Vatfallback\Api\CompanyLookup" />
+	<preference for="Dutchento\Vatfallback\Model\VatNumber\ConfigInterface" type="Dutchento\Vatfallback\Model\VatNumber\Config"/>
+	<preference for="Dutchento\Vatfallback\Service\ValidateVatInterface" type="Dutchento\Vatfallback\Service\ValidateVat" />
 	<type name="Magento\Customer\Model\Vat">
 		<plugin disabled="false" name="Dutchento_Vatfallback_Plugin_Magento_Customer_Model_Vat" sortOrder="10" type="Dutchento\Vatfallback\Plugin\Magento\Customer\Model\Vat"/>
 	</type>
