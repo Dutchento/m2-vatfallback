@@ -16,14 +16,21 @@ use Dutchento\Vatfallback\Service\Validate\Vies;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Class ValidateVat
+ * @package Dutchento\Vatfallback\Service
+ */
 class ValidateVat implements ValidateVatInterface
 {
-    /** @var LoggerInterface  */
+    /** @var LoggerInterface */
     protected $logger;
+
     /** @var Vatlayer */
     protected $vatLayerService;
+
     /** @var Vies */
     protected $viesService;
+
     /** @var Regex */
     protected $regexService;
 
@@ -31,6 +38,8 @@ class ValidateVat implements ValidateVatInterface
      * Vat constructor.
      * @param LoggerInterface $logger
      * @param Vatlayer $vatLayerService
+     * @param Vies $viesService
+     * @param Regex $regexService
      */
     public function __construct(
         LoggerInterface $logger,

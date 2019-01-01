@@ -1,10 +1,21 @@
 <?php
+/**
+ * Dutchento Vatfallback
+ * Provides free VAT fallback mechanism
+ * Copyright (C) 2018 Dutchento
+ *
+ * MIT license applies to this software
+ */
 
 namespace Dutchento\Vatfallback\Test\Unit\Service\Validate;
 
 use PHPUnit\Framework\TestCase;
 use Dutchento\Vatfallback\Service\Validate\Regex;
 
+/**
+ * Class RegexTest
+ * @package Dutchento\Vatfallback\Test\Unit\Service\Validate
+ */
 class RegexTest extends TestCase
 {
     /**
@@ -34,7 +45,7 @@ class RegexTest extends TestCase
 
         $this->assertFalse($regex->validateVATNumber($vatNr, $countryCode));
     }
-    
+
     /* Valid numbers */
     public function dataproviderValidNumbers()
     {

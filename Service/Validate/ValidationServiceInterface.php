@@ -8,6 +8,10 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
+/**
+ * Interface ValidationServiceInterface
+ * @package Dutchento\Vatfallback\Service\Validate
+ */
 interface ValidationServiceInterface
 {
     /**

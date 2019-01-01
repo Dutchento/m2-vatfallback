@@ -9,6 +9,10 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
+/**
+ * Class Regex
+ * @package Dutchento\Vatfallback\Service\Validate
+ */
 class Regex implements ValidationServiceInterface
 {
     /**
@@ -32,7 +36,7 @@ class Regex implements ValidationServiceInterface
      */
     public function getRegexMapping(string $countryIso2): string
     {
-        $mapping =  [
+        $mapping = [
             'AT' => '/^U[0-9]{8}$/',
             'BE' => '/^[0]{0,1}[0-9]{9}$/',
             'BG' => '/^[0-9]{9,10}$/',
@@ -62,6 +66,6 @@ class Regex implements ValidationServiceInterface
             'SK' => '/^[0-9]{10}$/',
         ];
 
-        return $mapping[strtoupper($countryIso2)] ?? '' ;
+        return $mapping[strtoupper($countryIso2)] ?? '';
     }
 }

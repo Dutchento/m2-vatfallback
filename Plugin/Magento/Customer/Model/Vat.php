@@ -14,6 +14,10 @@ use Dutchento\Vatfallback\Service\ValidateVatInterface;
 use Magento\Customer\Model\Vat as Subject;
 use Magento\Framework\DataObject;
 
+/**
+ * Class Vat
+ * @package Dutchento\Vatfallback\Plugin\Magento\Customer\Model
+ */
 class Vat
 {
     /** @var ValidateVatInterface */
@@ -32,8 +36,7 @@ class Vat
     public function __construct(
         ValidateVatInterface $validationService,
         CleanNumberString $cleanNumberService
-    )
-    {
+    ) {
         $this->validationService = $validationService;
         $this->cleanNumberService = $cleanNumberService;
     }
@@ -43,9 +46,10 @@ class Vat
      * @param callable $proceed
      * @param $countryCode
      * @param $vatNumber
-     * @param $requesterCountryCode
-     * @param $requesterVatNumber
+     * @param string $requesterCountryCode
+     * @param string $requesterVatNumber
      * @return DataObject
+     * @throws \Exception
      */
     public function aroundCheckVatNumber(
         Subject $subject,
@@ -54,8 +58,7 @@ class Vat
         $vatNumber,
         $requesterCountryCode = '',
         $requesterVatNumber = ''
-    ): DataObject
-    {
+    ): DataObject {
         /*
          * Clean the vat number before running the core vat check.
          * For example, a vat number like 'BE 0123.456.789' would return false,
@@ -89,6 +92,7 @@ class Vat
      * @param bool $success
      * @param string $message
      * @return DataObject
+     * @throws \Exception
      */
     public function createGatewayResponseObject(string $vatNumber, bool $success, string $message): DataObject
     {

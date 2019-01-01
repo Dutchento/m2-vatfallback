@@ -15,13 +15,20 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class Validate
+ * @package Dutchento\Vatfallback\Console\Command
+ */
 class Validate extends Command
 {
+    /**
+     * @var ValidateVatInterface
+     */
     private $validationService;
 
     /**
-    * @param ValidateVatInterface $validationService
-    */
+     * @param ValidateVatInterface $validationService
+     */
     public function __construct(
         ValidateVatInterface $validationService
     ) {
@@ -59,7 +66,7 @@ class Validate extends Command
             new InputArgument('country', InputArgument::REQUIRED, 'country'),
             new InputArgument('number', InputArgument::REQUIRED, 'number')
         ]);
-        
+
         parent::configure();
     }
 }

@@ -9,8 +9,13 @@
 
 namespace Dutchento\Vatfallback\Test\Unit\Webapi;
 
+use Magento\Framework\Webapi\Rest\Request;
 use Magento\TestFramework\TestCase\WebapiAbstract;
 
+/**
+ * Class CompanylookupTest
+ * @package Dutchento\Vatfallback\Test\Unit\Webapi
+ */
 class CompanylookupTest extends WebapiAbstract
 {
     public function testFailingLookup()
@@ -20,16 +25,16 @@ class CompanylookupTest extends WebapiAbstract
         $response = $this->_webApiCall([
             'rest' => [
                 'resourcePath' => '/V1/vat/companylookup/' . $vatNumber,
-                'httpMethod' => \Magento\Framework\Webapi\Rest\Request::HTTP_METHOD_GET,
+                'httpMethod' => Request::HTTP_METHOD_GET,
             ],
             'soap' => [
                 'service' => 'testModule1AllSoapAndRestV1',
-                'operation' =>'testModule1AllSoapAndRestV1Item',
+                'operation' => 'testModule1AllSoapAndRestV1Item',
             ],
-        ],[
+        ], [
             'vatNumber' => $vatNumber
         ]);
 
         $this->assertEquals(false, $item['status']);
-   }
+    }
 }
