@@ -9,6 +9,10 @@
 
 namespace Dutchento\Vatfallback\Api;
 
+/**
+ * Interface CompanyLookupInterface
+ * @package Dutchento\Vatfallback\Api
+ */
 interface CompanyLookupInterface
 {
     /**

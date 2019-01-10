@@ -16,9 +16,13 @@ use Dutchento\Vatfallback\Service\Validate\Vies;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Class ValidateVat
+ * @package Dutchento\Vatfallback\Service
+ */
 class ValidateVat implements ValidateVatInterface
 {
-    /** @var LoggerInterface  */
+    /** @var LoggerInterface */
     protected $logger;
 
     /** @var Vatlayer */

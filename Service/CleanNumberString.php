@@ -9,6 +9,10 @@
 
 namespace Dutchento\Vatfallback\Service;
 
+/**
+ * Class CleanNumberString
+ * @package Dutchento\Vatfallback\Service
+ */
 class CleanNumberString
 {
     /**

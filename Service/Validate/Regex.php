@@ -9,8 +9,17 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
+/**
+ * Class Regex
+ * @package Dutchento\Vatfallback\Service\Validate
+ */
+
 use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
 
+/**
+ * Class Regex
+ * @package Dutchento\Vatfallback\Service\Validate
+ */
 class Regex implements ValidationServiceInterface
 {
     /**
@@ -34,7 +43,7 @@ class Regex implements ValidationServiceInterface
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
         // as fallback use a pattern that always validates
-        $regex = $this->vatPatternMap[$countryIso2] ?? '.*' ;
+        $regex = $this->vatPatternMap[$countryIso2] ?? '.*';
 
         return (bool)preg_match($regex, $vatNumber);
     }

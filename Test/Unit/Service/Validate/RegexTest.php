@@ -1,4 +1,11 @@
 <?php
+/**
+ * Dutchento Vatfallback
+ * Provides free VAT fallback mechanism
+ * Copyright (C) 2018 Dutchento
+ *
+ * MIT license applies to this software
+ */
 
 namespace Dutchento\Vatfallback\Test\Unit\Service\Validate;
 
@@ -6,6 +13,10 @@ use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
 use Dutchento\Vatfallback\Service\Validate\Regex;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class RegexTest
+ * @package Dutchento\Vatfallback\Test\Unit\Service\Validate
+ */
 class RegexTest extends TestCase
 {
     /**

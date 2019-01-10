@@ -9,10 +9,16 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
+use Exception;
 use GuzzleHttp\Client;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\Information as StoreInformation;
+use Magento\Store\Model\ScopeInterface;
 
+/**
+ * Class Vies
+ * @package Dutchento\Vatfallback\Service\Validate
+ */
 class Vies implements ValidationServiceInterface
 {
     /** @var bool */
@@ -34,17 +40,20 @@ class Vies implements ValidationServiceInterface
         $this->scopeConfig = $scopeConfig;
         $this->viesIsEnabled = (bool)$scopeConfig->getValue(
             'customer/vatfallback/vies_validation',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_STORE
         );
         $this->viesTimeout = (float)$scopeConfig->getValue(
             'customer/vatfallback/vatlayer_timeout',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_STORE
         );
     }
 
     /**
      * @inheritdoc
-     * @throws FailedValidationException
+     * @param string $vatNumber
+     * @param string $countryIso2
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
@@ -69,7 +78,7 @@ class Vies implements ValidationServiceInterface
                     'BtnSubmitVat' => 'Verify',
                 ]
             ]);
-        } catch (\Exception $error) {
+        } catch (Exception $error) {
             throw new FailedValidationException("HTTP error {$error->getMessage()}");
         }
 

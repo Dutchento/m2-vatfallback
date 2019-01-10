@@ -13,6 +13,10 @@ use Dutchento\Vatfallback\Service\CleanNumberString;
 use Dutchento\Vatfallback\Service\Vatlayer\Client as VatlayerClient;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Class CompanyLookup
+ * @package Dutchento\Vatfallback\Api
+ */
 class CompanyLookup implements CompanyLookupInterface
 {
     /** @var VatlayerClient */
