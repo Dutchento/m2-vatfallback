@@ -14,6 +14,14 @@ namespace Dutchento\Vatfallback\Service\Validate;
  */
 interface ValidationServiceInterface
 {
+
+    /**
+     * Which validation service is used
+     *
+     * @return string
+     */
+    public function getValidationServiceName(): string;
+
     /**
      * Validate a given VAT number via an external service or algorithm
      * @param string $vatNumber
