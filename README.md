@@ -24,8 +24,13 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 ## Tested on
 
 - Magento 2.2 Community & Commerce
+- Magento 2.3 Community
 
 ## Changelog
+[1.5.0] Better error handling if services are unavailable, no next service checking if 100% sure invalid result
+
+[1.4.0] Refactor __constructors, decoupled validationservices from validator
+
 [1.3.0] Regex validation now configurable via XML. Improved tests and regex validation
 
 [1.2.0] added a timeout sys conf value for connecting to APIs
@@ -47,6 +52,7 @@ Warning: Since all of the free VIES API's are slow and somewhat unreliable the c
 ## Authors
 
 - Sander Mangel [Github](https://github.com/sandermangel) [Twitter](https://twitter.com/sandermangel)
+- Jeroen Boersma [Github](https://github.com/jeroenboersma) [Twitter](https://twitter.com/srcoder)
 - Timon de Groot [Github](https://github.com/tdgroot) [Twitter](https://twitter.com/TimonGreat)
 
 ### Authors M1 Version
