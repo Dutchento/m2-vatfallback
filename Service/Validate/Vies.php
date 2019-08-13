@@ -9,9 +9,12 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
+use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationIgnoredException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationUnavailableException;
 use Exception;
-use GuzzleHttp\Client;
 use Dutchento\Vatfallback\Service\ConfigurationInterface;
+use Dutchento\Vatfallback\Service\Vies\Client;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\Information as StoreInformation;
 
@@ -25,6 +28,9 @@ class Vies implements ValidationServiceInterface
     protected $configuration;
     /** @var ScopeConfigInterface */
     protected $scopeConfig;
+    /** @var Client */
+    protected $client;
+
 
     /**
      * Vatlayer constructor.
@@ -32,10 +38,12 @@ class Vies implements ValidationServiceInterface
      */
     public function __construct(
         ConfigurationInterface $configuration,
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        Client $client
     ) {
         $this->configuration = $configuration;
         $this->scopeConfig = $scopeConfig;
+        $this->client  = $client;
     }
 
     /**
@@ -57,41 +65,38 @@ class Vies implements ValidationServiceInterface
     {
         // check if service is enabled and configured
         if (!$this->configuration->isViesValidation()) {
-            return false;
+            throw new ValidationDisabledException('VIES is disabled');
         }
 
         // call API layer endpoint
         try {
-            $client = new Client(['base_uri' => 'http://ec.europa.eu']);
-
-            $response = $client->request('GET', '/taxation_customs/vies/viesquer.do', [
-                'connect_timeout' => max(1, $this->configuration->getViesTimeout()),
-                'query' => [
-                    'ms' => $countryIso2,
-                    'iso' => $countryIso2,
-                    'vat' => $vatNumber,
-                    'requesterMs' => $this->getMerchantCountryCode(),
-                    'requesterIso' => $this->getMerchantCountryCode(),
-                    'requesterVat' => $this->getMerchantVatNumber(),
-                    'BtnSubmitVat' => 'Verify',
-                ]
-            ]);
+            $response = $this->client->getTaxationCustomsVies(
+                $countryIso2,
+                $vatNumber,
+                $this->getMerchantCountryCode(),
+                $this->getMerchantVatNumber(),
+                $this->configuration->getViesTimeout()
+            );
         } catch (Exception $error) {
-            throw new FailedValidationException("HTTP error {$error->getMessage()}");
+            throw new ValidationUnavailableException("API unavailable {$error->getMessage()}");
         }
 
         $contents = $response->getBody()->getContents();
 
         // did we get a valid statuscode
         if ($response->getStatusCode() > 299) {
-            throw new FailedValidationException(
-                "Vatlayer API responded with status {$response->getStatusCode()}, 
-                body {$contents}"
-            );
+            throw new ValidationUnavailableException("API unavailable returns: status {$response->getStatusCode()} '{$contents}'");
         }
 
-        // body of API contains a valid flag
-        return (false !== strpos($contents, 'Yes, valid VAT number'));
+        if (false !== strpos($responseBody, 'No, invalid VAT number')) {
+            return false;
+        }
+
+        if (false !== strpos($contents, 'Yes, valid VAT number')) {
+            return true;
+        }
+
+        throw new ValidationIgnoredException('VIES could not resolve result');
     }
 
     /**
