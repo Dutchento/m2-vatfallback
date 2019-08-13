@@ -25,16 +25,21 @@ class CompanyLookup implements CompanyLookupInterface
     /** @var LoggerInterface */
     protected $logger;
 
+    /** @var CleanNumberString */
+    protected $cleanNumberString;
+
     /**
      * CompanyLookup constructor.
      * @param VatlayerClient $vatlayerClient
      */
     public function __construct(
         VatlayerClient $vatlayerClient,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CleanNumberString $cleanNumberString
     ) {
         $this->vatlayerClient = $vatlayerClient;
         $this->logger = $logger;
+        $this->cleanNumberString = $cleanNumberString;
     }
 
     /**
@@ -43,7 +48,8 @@ class CompanyLookup implements CompanyLookupInterface
     public function byVatnumber(string $vatNumber): array
     {
         $country = substr($vatNumber, 0, 2);
-        $cleanVatnumber = (new CleanNumberString())->returnStrippedString($vatNumber);
+        $cleanVatnumber = $this->cleanNumberString->returnStrippedString($vatNumber);
+
         $message = 'Could not validate';
 
         try {
