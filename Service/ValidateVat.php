@@ -69,11 +69,11 @@ class ValidateVat implements ValidateVatInterface
 
             } catch (ValidationDisabledException $exception) {
                 // validation disabled, proceed next
-                $this->logger->debug("vatfallback {$validationName} disabled: {$exception->getMessage()}");
+                $this->logger->notice("vatfallback {$validationName} disabled: {$exception->getMessage()}");
 
             } catch (ValidationIgnoredException $exception) {
                 // validation ignored, proceed next
-                $this->logger->log("vatfallback {$validationName} ignored: {$exception->getMessage()}");
+                $this->logger->notice("vatfallback {$validationName} ignored: {$exception->getMessage()}");
 
             } catch (ValidationFailedException $exception) {
                 // validation failed, a problem occured
