@@ -51,7 +51,7 @@ class Regex implements ValidationServiceInterface
         $vatPatternMap = $this->vatNumberConfig->get();
 
         // as fallback use a pattern that always validates
-        $regex = $vatPatternMap[$countryIso2] ?? '.*';
+        $regex = $vatPatternMap[$countryIso2] ?? '#.*#';
         return (bool)preg_match($regex, $vatNumber);
     }
 }
