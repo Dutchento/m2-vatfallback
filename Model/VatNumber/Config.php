@@ -8,19 +8,23 @@
  */
 namespace Dutchento\Vatfallback\Model\VatNumber;
 
-use Dutchento\Vatfallback\Model\VatNumber\Config\Data;
+use Magento\Framework\Config\DataInterface;
 
 class Config implements ConfigInterface
 {
-    /** @var Data  */
+    /** @var DataInterface */
     private $dataSource;
+
+    /** @var array */
+    private $map;
 
     /**
      * Config constructor.
-     * @param Data $dataSource
+     * @param DataInterface $dataSource
      */
-    public function __construct(Data $dataSource)
-    {
+    public function __construct(
+        DataInterface $dataSource
+    ) {
         $this->dataSource = $dataSource;
     }
 
@@ -29,6 +33,12 @@ class Config implements ConfigInterface
      */
     public function get(): array
     {
-        return $this->dataSource->get();
+        if (null !== $this->map) {
+            return $this->map;
+        }
+
+        $map = (array)$this->dataSource->get();
+        $this->map = $map;
+        return $map;
     }
 }
