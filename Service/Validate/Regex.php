@@ -15,6 +15,9 @@ namespace Dutchento\Vatfallback\Service\Validate;
  */
 
 use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
+use Dutchento\Vatfallback\Service\ConfigurationInterface;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
 
 /**
  * Class Regex
@@ -22,6 +25,9 @@ use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
  */
 class Regex implements ValidationServiceInterface
 {
+    /** @var ConfigurationInterface */
+    protected $configuration;
+
     /** @var ConfigInterface */
     protected $vatNumberConfig;
 
@@ -30,8 +36,10 @@ class Regex implements ValidationServiceInterface
      * @param ConfigInterface $vatNumberConfig
      */
     public function __construct(
+            ConfigurationInterface $configuration,
             ConfigInterface $vatNumberConfig
     ) {
+        $this->configuration = $configuration;
         $this->vatNumberConfig = $vatNumberConfig;
     }
 
@@ -48,10 +56,20 @@ class Regex implements ValidationServiceInterface
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
+        if (!$this->configuration->isRegExpValidation()) {
+            throw new ValidationDisabledException('RegExp is disabled');
+        }
+
         $vatPatternMap = $this->vatNumberConfig->get();
 
         // as fallback use a pattern that always validates
         $regex = $vatPatternMap[$countryIso2] ?? '#.*#';
-        return (bool)preg_match($regex, $vatNumber);
+        $result = preg_match($regex, $vatNumber);
+
+        if (false === $result) {
+            throw new ValidationFailedException("RegExp error occured validating '{$vatNumber}' against '{$regex}'");
+        }
+
+        return $result > 0;
     }
 }
