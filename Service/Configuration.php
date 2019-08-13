@@ -46,7 +46,7 @@ class Configuration implements ConfigurationInterface
 
     public function getVatlayerApikey(StoreInterface $store = null): string
     {
-        return $this->storeManager
+        return (string)$this->storeManager
             ->getStore($store)
             ->getConfig(self::XMLPATH_CUSTOMER_VATFALLBACK_VATLAYER_APIKEY);
     }
