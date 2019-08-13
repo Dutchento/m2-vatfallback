@@ -69,7 +69,7 @@ class Vies implements ValidationServiceInterface
                 'query' => [
                     'ms' => $countryIso2,
                     'iso' => $countryIso2,
-                    'vat' => $countryIso2 . $vatNumber,
+                    'vat' => $vatNumber,
                     'requesterMs' => $this->getMerchantCountryCode(),
                     'requesterIso' => $this->getMerchantCountryCode(),
                     'requesterVat' => $this->getMerchantVatNumber(),
@@ -80,16 +80,18 @@ class Vies implements ValidationServiceInterface
             throw new FailedValidationException("HTTP error {$error->getMessage()}");
         }
 
+        $contents = $response->getBody()->getContents();
+
         // did we get a valid statuscode
         if ($response->getStatusCode() > 299) {
             throw new FailedValidationException(
                 "Vatlayer API responded with status {$response->getStatusCode()}, 
-                body {$response->getBody()->getContents()}"
+                body {$contents}"
             );
         }
 
         // body of API contains a valid flag
-        return (false !== strpos($response->getBody()->getContents(), 'Yes, valid VAT number'));
+        return (false !== strpos($contents, 'Yes, valid VAT number'));
     }
 
     /**
