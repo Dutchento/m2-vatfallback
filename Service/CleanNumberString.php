@@ -21,10 +21,14 @@ class CleanNumberString
      */
     public function returnStrippedString($vatInput): string
     {
-        // strip first 2 letters as country code
-        $vatNrWithoutCountry = preg_replace('/^[a-z]{2}/i', '', $vatInput);
-
-        // remove anything not alpha numeric
-        return preg_replace('/[^0-9a-z]+/i', '', $vatNrWithoutCountry);
+        return preg_replace([
+                // strip first 2 letters as country code
+                '/^[a-z]{2}/i',
+                // remove anything not alpha numeric
+                '/[^0-9a-z]+/i'
+            ],
+            '',
+            $vatInput
+        );
     }
 }
