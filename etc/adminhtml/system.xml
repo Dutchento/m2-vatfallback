@@ -2,30 +2,38 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
 	<system>
 		<section id="customer">
-			<group id="vatfallback" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label">
+			<group id="vatfallback" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label comment">
 				<label>Vatfallback</label>
 				<comment>Vatfallback provides a more reliable way of validating VAT numbers by using both on- and offline fallback services</comment>
-				<field id="vies_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="select">
+
+				<field id="vies_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label comment" type="select">
 					<label>Use unofficial VIES service</label>
 					<comment/>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-                <field id="vies_timeout" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="text">
+                <field id="vies_timeout" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="15" translate="label comment" type="text">
                     <label>VIES API timeout (seconds)</label>
                     <comment><![CDATA[Timeout in seconds for connecting to the VIES API. The lower the less likely to get a hit, more will add to checkout time]]></comment>
                 </field>
-				<field id="vatlayer_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="select">
+
+				<field id="vatlayer_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="20" translate="label comment" type="select">
 					<label>Use Vatlayer service</label>
 					<comment/>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-				<field id="vatlayer_apikey" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="text">
+				<field id="vatlayer_apikey" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="25" translate="label comment" type="text">
 					<label>Vatlayer API key</label>
                     <comment><![CDATA[Register with <a href='https://vatlayer.com/product'>Vatlayer.com</a> to obtain an API key]]></comment>
 				</field>
-				<field id="vatlayer_timeout" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="10" translate="label" type="text">
+				<field id="vatlayer_timeout" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="28" translate="label comment" type="text">
 					<label>Vatlayer API timeout (seconds)</label>
                     <comment><![CDATA[The lower the less likely to get a hit, more will add to page request time in API, checkout]]></comment>
+				</field>
+
+				<field id="regexp_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="30" translate="label comment" type="select">
+					<label>Regular Expression</label>
+					<comment><![CDATA[Use regular expressions to validate vat numbers]]></comment>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
 			</group>
 		</section>

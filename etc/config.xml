@@ -9,6 +9,8 @@
 				<vatlayer_validation>0</vatlayer_validation>
 				<vatlayer_apikey></vatlayer_apikey>
 				<vatlayer_timeout>2</vatlayer_timeout>
+
+				<regexp_validation>1</regexp_validation>
 			</vatfallback>
 		</customer>
 	</default>
