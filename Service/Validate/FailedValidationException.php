@@ -9,12 +9,13 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
-use RuntimeException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
 
 /**
  * Class FailedValidationException
  * @package Dutchento\Vatfallback\Service\Validate
+ * @deprecated in favor of \Dutchento\Vatfallback\Service\Exceptions\*
  */
-class FailedValidationException extends RuntimeException
+class FailedValidationException extends ValidationFailedException
 {
 }
