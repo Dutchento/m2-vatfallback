@@ -9,10 +9,9 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
+use Dutchento\Vatfallback\Service\ConfigurationInterface;
 use Dutchento\Vatfallback\Service\Vatlayer\Client as VatlayerClient;
 use Exception;
-use \Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
 
 /**
  * Class Vatlayer
@@ -20,11 +19,8 @@ use Magento\Store\Model\ScopeInterface;
  */
 class Vatlayer implements ValidationServiceInterface
 {
-    /** @var bool */
-    protected $vatlayerIsEnabled;
-
-    /** @var string */
-    protected $vatlayerApiKey;
+    /** @var ConfigurationInterface */
+    protected $configuration;
 
     /** @var VatlayerClient  */
     protected $vatlayerClient;
@@ -34,18 +30,19 @@ class Vatlayer implements ValidationServiceInterface
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
+        ConfigurationInterface $configuration,
         VatlayerClient $vatlayerClient
     ) {
+        $this->configuration = $configuration;
         $this->vatlayerClient = $vatlayerClient;
-        $this->vatlayerIsEnabled = (bool)$scopeConfig->getValue(
-            'customer/vatfallback/vatlayer_validation',
-            ScopeInterface::SCOPE_STORE
-        );
-        $this->vatlayerApiKey = (string)$scopeConfig->getValue(
-            'customer/vatfallback/vatlayer_apikey',
-            ScopeInterface::SCOPE_STORE
-        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValidationServiceName(): string
+    {
+        return 'Vatlayer';
     }
 
     /**
@@ -54,8 +51,7 @@ class Vatlayer implements ValidationServiceInterface
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
-        // check if service is enabled and configured
-        if (!$this->vatlayerIsEnabled || '' === $this->vatlayerApiKey) {
+        if (!$this->configuration->isVatlayerValidation()) {
             return false;
         }
 
@@ -65,7 +61,7 @@ class Vatlayer implements ValidationServiceInterface
         } catch (Exception $error) {
             throw new FailedValidationException("HTTP error {$error->getMessage()}");
         }
-        
+
         if (isset($clientResponse['error'])) {
             throw new FailedValidationException($clientResponse['error']['info']);
         }
