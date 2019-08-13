@@ -9,12 +9,10 @@
 
 namespace Dutchento\Vatfallback\Service\Vatlayer;
 
-use Exception;
+use Dutchento\Vatfallback\Service\ConfigurationInterface;
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception\GuzzleException;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
 use RuntimeException;
+use Exception;
 
 /**
  * Class Client
@@ -22,30 +20,21 @@ use RuntimeException;
  */
 class Client
 {
+
     /** @var null | array */
-    protected static $validationResult;
+    protected static $validationResult = [];
 
-    /** @var string */
-    protected $vatlayerApiKey;
-
-    /** @var float */
-    protected $vatlayerTimeout;
+    /** @var ConfigurationInterface */
+    private $configuration;
 
     /**
      * Vatlayer constructor.
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig
+        ConfigurationInterface $configuration
     ) {
-        $this->vatlayerApiKey = (string)$scopeConfig->getValue(
-            'customer/vatfallback/vatlayer_apikey',
-            ScopeInterface::SCOPE_STORE
-        );
-        $this->vatlayerTimeout = (float)$scopeConfig->getValue(
-            'customer/vatfallback/vatlayer_timeout',
-            ScopeInterface::SCOPE_STORE
-        );
+        $this->configuration = $configuration;
     }
 
     /**
@@ -53,12 +42,24 @@ class Client
      * @param string $vatNumber
      * @param string $countryIso2
      * @return array
-     * @throws GuzzleException
+     * @throws RuntimeException
      */
     public function retrieveVatnumberEndpoint(string $vatNumber, string $countryIso2): array
     {
-        if (null !== self::$validationResult) {
-            return self::$validationResult;
+        if (!$this->configuration->isVatlayerValidation()) {
+            throw new RuntimeException("Vatlayer isn't enabled");
+        }
+
+        $vatlayerApiKey = $this->configuration->getVatlayerApikey();
+        if (!$vatlayerApiKey) {
+            throw new RuntimeException("Vatlayer API key isn't setup, did you forget to configure vatlayer");
+        }
+
+        $vatlayerTimeout = $this->configuration->getVatlayerTimeout();
+
+        $cacheKey = $countryIso2 . $vatNumber;
+        if (isset(self::$validationResult[$cacheKey])) {
+            return self::$validationResult[$cacheKey];
         }
 
         // call API layer endpoint
@@ -66,9 +67,9 @@ class Client
             $client = new GuzzleClient(['base_uri' => 'http://apilayer.net']);
 
             $response = $client->request('GET', '/api/validate', [
-                'connect_timeout' => max(1, $this->vatlayerTimeout),
+                'connect_timeout' => max(1, $vatlayerTimeout),
                 'query' => [
-                    'access_key' => $this->vatlayerApiKey,
+                    'access_key' => $vatlayerApiKey,
                     'vat_number' => $countryIso2 . $vatNumber,
                     'format' => 1
                 ]
@@ -77,20 +78,24 @@ class Client
             throw new RuntimeException("HTTP error {$error->getMessage()}");
         }
 
+        $contents = $response->getBody()->getContents();
+
         // did we get a valid statuscode
         if ($response->getStatusCode() > 299) {
             throw new RuntimeException(
                 "Vatlayer API responded with status {$response->getStatusCode()}, 
-                body {$response->getBody()->getContents()}"
+                body {$contents}"
             );
         }
 
         // Response body should be JSON
-        self::$validationResult = json_decode($response->getBody()->getContents(), true);
+        $result = json_decode($contents, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException("No valid JSON response, body {$response->getBody()->getContents()}");
+            throw new RuntimeException("No valid JSON response, body {$contents}");
         }
 
+        // Cache result
+        self::$validationResult[$cacheKey] = $result;
         return self::$validationResult;
     }
 }
