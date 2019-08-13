@@ -58,4 +58,10 @@ class Configuration implements ConfigurationInterface
             ->getConfig(self::XMLPATH_CUSTOMER_VATFALLBACK_VATLAYER_TIMEOUT);
     }
 
+    public function isRegExpValidation(StoreInterface $store = null): bool
+    {
+        return (bool)$this->storeManager
+            ->getStore($store)
+            ->getConfig(self::XMLPATH_CUSTOMER_VATFALLBACK_REGEXP_VALIDATION);
+    }
 }
