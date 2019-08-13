@@ -10,6 +10,11 @@
 namespace Dutchento\Vatfallback\Service\Validate;
 
 use Dutchento\Vatfallback\Service\ConfigurationInterface;
+use Dutchento\Vatfallback\Service\Exceptions\InvalidConfigurationException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationIgnoredException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationUnavailableException;
 use Dutchento\Vatfallback\Service\Vatlayer\Client as VatlayerClient;
 use Exception;
 
@@ -52,20 +57,48 @@ class Vatlayer implements ValidationServiceInterface
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
         if (!$this->configuration->isVatlayerValidation()) {
-            return false;
+            throw new ValidationDisabledException('Vatlayer is disabled');
+        }
+
+        $apiKey = $this->configuration->getVatlayerApikey();
+        if ($apiKey) {
+            throw new InvalidConfigurationException('Vatlayer API is not setup correctly');
         }
 
         // call API layer endpoint
         try {
-            $clientResponse = $this->vatlayerClient->retrieveVatnumberEndpoint($vatNumber, $countryIso2);
-        } catch (Exception $error) {
-            throw new FailedValidationException("HTTP error {$error->getMessage()}");
+            $response = $this->vatlayerClient
+                ->retrieveVatnumberEndpoint(
+                    $vatNumber,
+                    $countryIso2,
+                    $apiKey,
+                    $this->configuration->getVatlayerTimeout()
+                );
+        } catch (Exception $exception) {
+            throw new ValidationUnavailableException("API unavailable {$error->getMessage()}");
         }
 
-        if (isset($clientResponse['error'])) {
-            throw new FailedValidationException($clientResponse['error']['info']);
+        $contents = $response->getBody()->getContents();
+
+        // did we get a valid statuscode
+        if ($response->getStatusCode() > 299) {
+            throw new ValidationUnavailableException("API unavailable returns: status {$response->getStatusCode()} '{$contents}'");
         }
 
-        return (bool)$clientResponse['valid'];
+        // Response body should be JSON
+        $result = json_decode($contents, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new ValidationFailedException("No valid JSON response, body {$contents}");
+        }
+
+        if (isset($result['error'])) {
+            throw new ValidationFailedException('Vatlayer could not be queried ' . $result['error']);
+        }
+
+        if (! isset($result['valid'])) {
+            throw new ValidationIgnoredException('Vatlayer did not return validation');
+        }
+
+        return (bool)$result['valid'];
     }
 }
