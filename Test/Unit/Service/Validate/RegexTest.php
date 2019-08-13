@@ -10,6 +10,9 @@
 namespace Dutchento\Vatfallback\Test\Unit\Service\Validate;
 
 use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
+use Dutchento\Vatfallback\Service\ConfigurationInterface;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
 use Dutchento\Vatfallback\Service\Validate\Regex;
 use PHPUnit\Framework\TestCase;
 
@@ -19,10 +22,6 @@ use PHPUnit\Framework\TestCase;
  */
 class RegexTest extends TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigInterface
-     */
-    private $vatNumberConfigMock;
 
     /**
      * @var Regex
@@ -31,11 +30,63 @@ class RegexTest extends TestCase
 
     protected function setUp()
     {
-        $this->vatNumberConfigMock = $this->createMock(ConfigInterface::class);
-        $this->vatNumberConfigMock->expects($this->any())
+        $configurationMock = $this->createMock(ConfigurationInterface::class);
+        $configurationMock->expects($this->any())
+                ->method('isRegExpValidation')
+                ->willReturn(true);
+
+        $vatNumberConfigMock = $this->createMock(ConfigInterface::class);
+        $vatNumberConfigMock->expects($this->any())
             ->method('get')
             ->willReturn($this->getRegexList());
-        $this->regex = new Regex($this->vatNumberConfigMock);
+        $this->regex = new Regex(
+                $configurationMock,
+                $vatNumberConfigMock
+        );
+    }
+
+    public function testExpectDisabledException()
+    {
+        $configurationMock = $this->createMock(ConfigurationInterface::class);
+        $configurationMock->expects($this->once())
+                ->method('isRegExpValidation')
+                ->willReturn(false);
+
+        $vatNumberMock = $this->createMock(ConfigInterface::class);
+        $vatNumberMock->expects($this->never())
+            ->method('get')
+            ->willReturn([]);
+
+        $regexp = new Regex(
+                $configurationMock,
+                $vatNumberMock
+        );
+
+        $this->expectException(ValidationDisabledException::class);
+        $regexp->validateVATNumber('12345657', 'xx');
+    }
+
+    public function testExpectValidationFailedException()
+    {
+        $configurationMock = $this->createMock(ConfigurationInterface::class);
+        $configurationMock->expects($this->once())
+            ->method('isRegExpValidation')
+           ->willReturn(true);
+
+        $vatNumberMock = $this->createMock(ConfigInterface::class);
+        $vatNumberMock->expects($this->once())
+                ->method('get')
+                ->willReturn([
+                    'xx' => 'invalidregexp#'
+                ]);
+
+        $regexp = new Regex(
+            $configurationMock,
+            $vatNumberMock
+        );
+
+        $this->expectException(ValidationFailedException::class);
+        $regexp->validateVATNumber('123455', 'xx');
     }
 
     /**
