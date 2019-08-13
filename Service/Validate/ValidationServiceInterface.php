@@ -8,6 +8,8 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
+use Dutchento\Vatfallback\Service\Exceptions\GenericException;
+
 /**
  * Interface ValidationServiceInterface
  * @package Dutchento\Vatfallback\Service\Validate
@@ -27,6 +29,7 @@ interface ValidationServiceInterface
      * @param string $vatNumber
      * @param string $countryIso2
      * @return bool
+     * @throws GenericException
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool;
 }
