@@ -9,7 +9,10 @@
 
 namespace Dutchento\Vatfallback\Service;
 
-use Dutchento\Vatfallback\Service\Validate\FailedValidationException;
+use Dutchento\Vatfallback\Service\Exceptions\GenericException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationIgnoredException;
 use Dutchento\Vatfallback\Service\Validate\ValidationServiceInterface;
 use Psr\Log\LoggerInterface;
 
@@ -58,14 +61,31 @@ class ValidateVat implements ValidateVatInterface
             $validationName = $validationService->getValidationServiceName();
             try {
 
-                if ($validationService->validateVATNumber($cleanVatString, $countryIso2)) {
-                    return [
-                        'result' => true,
-                        'service' => $validationName
-                    ];
-                }
+                $result = $validationService->validateVATNumber($cleanVatString, $countryIso2);
+                return [
+                    'result' => $result,
+                    'service' => $validationName
+                ];
 
-            } catch (FailedValidationException $exception) {
+            } catch (ValidationDisabledException $exception) {
+                // validation disabled, proceed next
+                $this->logger->debug("vatfallback {$validationName} disabled: {$exception->getMessage()}");
+
+            } catch (ValidationIgnoredException $exception) {
+                // validation ignored, proceed next
+                $this->logger->log("vatfallback {$validationName} ignored: {$exception->getMessage()}");
+
+            } catch (ValidationFailedException $exception) {
+                // validation failed, a problem occured
+                $this->logger->error("vatfallback {$validationName} failed: {$exception->getMessage()}");
+
+                return [
+                    'result' => false,
+                    'service' => $validationName
+                ];
+
+            } catch (GenericException $exception) {
+                // Generic exception, log and continue
                 $this->logger->error("vatfallback {$validationName} error: {$exception->getMessage()}");
             }
         }
