@@ -11,9 +11,9 @@ namespace Dutchento\Vatfallback\Service\Validate;
 
 use Exception;
 use GuzzleHttp\Client;
+use Dutchento\Vatfallback\Service\ConfigurationInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\Information as StoreInformation;
-use Magento\Store\Model\ScopeInterface;
 
 /**
  * Class Vies
@@ -21,13 +21,9 @@ use Magento\Store\Model\ScopeInterface;
  */
 class Vies implements ValidationServiceInterface
 {
-    /** @var bool */
-    protected $viesIsEnabled;
-
-    /** @var float */
-    protected $viesTimeout;
-
-    /** @var ScopeConfigInterface  */
+    /** @var ConfigurationInterface */
+    protected $configuration;
+    /** @var ScopeConfigInterface */
     protected $scopeConfig;
 
     /**
@@ -35,17 +31,19 @@ class Vies implements ValidationServiceInterface
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
+        ConfigurationInterface $configuration,
         ScopeConfigInterface $scopeConfig
     ) {
+        $this->configuration = $configuration;
         $this->scopeConfig = $scopeConfig;
-        $this->viesIsEnabled = (bool)$scopeConfig->getValue(
-            'customer/vatfallback/vies_validation',
-            ScopeInterface::SCOPE_STORE
-        );
-        $this->viesTimeout = (float)$scopeConfig->getValue(
-            'customer/vatfallback/vatlayer_timeout',
-            ScopeInterface::SCOPE_STORE
-        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValidationServiceName(): string
+    {
+        return 'Vies';
     }
 
     /**
@@ -58,7 +56,7 @@ class Vies implements ValidationServiceInterface
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
         // check if service is enabled and configured
-        if (!$this->viesIsEnabled) {
+        if (!$this->configuration->isViesValidation()) {
             return false;
         }
 
@@ -67,7 +65,7 @@ class Vies implements ValidationServiceInterface
             $client = new Client(['base_uri' => 'http://ec.europa.eu']);
 
             $response = $client->request('GET', '/taxation_customs/vies/viesquer.do', [
-                'connect_timeout' => max(1, $this->viesTimeout),
+                'connect_timeout' => max(1, $this->configuration->getViesTimeout()),
                 'query' => [
                     'ms' => $countryIso2,
                     'iso' => $countryIso2,
