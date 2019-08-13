@@ -96,6 +96,6 @@ class Client
 
         // Cache result
         self::$validationResult[$cacheKey] = $result;
-        return self::$validationResult;
+        return $result;
     }
 }
