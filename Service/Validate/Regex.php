@@ -64,9 +64,10 @@ class Regex implements ValidationServiceInterface
 
         // as fallback use a pattern that always validates
         $regex = $vatPatternMap[$countryIso2] ?? '#.*#';
-        $result = preg_match($regex, $vatNumber);
 
-        if (false === $result) {
+        try {
+            $result = preg_match($regex, $vatNumber);
+        } catch (\Exception $exception) {
             throw new ValidationFailedException("RegExp error occured validating '{$vatNumber}' against '{$regex}'");
         }
 
