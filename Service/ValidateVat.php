@@ -72,7 +72,7 @@ class ValidateVat implements ValidateVatInterface
 
         return [
             'result' => false,
-            'service' => null
+            'service' => 'None'
         ];
     }
 }
