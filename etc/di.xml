@@ -47,5 +47,14 @@
             <argument name="dataSource" xsi:type="object">VatNumberConfigData</argument>
         </arguments>
     </type>
+    <type name="Dutchento\Vatfallback\Service\ValidateVat">
+        <arguments>
+            <argument name="validationSerives" xsi:type="array">
+                <item name="vies" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Vies</item>
+                <item name="vatlayer" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Vatlayer</item>
+                <item name="regexp" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Regex</item>
+            </argument>
+        </arguments>
+    </type>
 
 </config>
