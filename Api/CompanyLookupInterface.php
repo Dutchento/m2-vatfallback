@@ -20,7 +20,7 @@ interface CompanyLookupInterface
      *
      * @api
      * @param string $vatNumber vatnumber
-     * @return array Company data
+     * @return string[] Company data
      */
     public function byVatnumber(string $vatNumber): array;
 }
