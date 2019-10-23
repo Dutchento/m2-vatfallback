@@ -76,7 +76,7 @@ class Vatlayer implements ValidationServiceInterface
                     $this->configuration->getVatlayerHttpsEnabled()
                 );
         } catch (Exception $exception) {
-            throw new ValidationUnavailableException("API unavailable {$error->getMessage()}");
+            throw new ValidationUnavailableException("API unavailable {$exception->getMessage()}");
         }
 
         $contents = $response->getBody()->getContents();
