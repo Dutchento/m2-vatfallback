@@ -36,16 +36,16 @@ class ValidateVat implements ValidateVatInterface
      *
      * @param LoggerInterface $logger
      * @param CleanNumberString $cleanNumberString
-     * @param ValidationServiceInterface[] $validationSerives
+     * @param ValidationServiceInterface[] $validationServices
      */
     public function __construct(
         LoggerInterface $logger,
         CleanNumberString $cleanNumberString,
-        array $validationSerives = []
+        array $validationServices = []
     ) {
         $this->logger = $logger;
         $this->cleanNumberString = $cleanNumberString;
-        $this->validationServices = $validationSerives;
+        $this->validationServices = $validationServices;
     }
 
     /**
@@ -57,16 +57,13 @@ class ValidateVat implements ValidateVatInterface
 
         /** @var ValidationServiceInterface $validationService */
         foreach ($this->validationServices as $validationService) {
-
             $validationName = $validationService->getValidationServiceName();
             try {
-
                 $result = $validationService->validateVATNumber($cleanVatString, $countryIso2);
                 return [
                     'result' => $result,
                     'service' => $validationName
                 ];
-
             } catch (ValidationDisabledException $exception) {
                 // validation disabled, proceed next
                 $this->logger->notice("vatfallback {$validationName} disabled: {$exception->getMessage()}");
@@ -83,7 +80,6 @@ class ValidateVat implements ValidateVatInterface
                     'result' => false,
                     'service' => $validationName
                 ];
-
             } catch (GenericException $exception) {
                 // Generic exception, log and continue
                 $this->logger->error("vatfallback {$validationName} error: {$exception->getMessage()}");
