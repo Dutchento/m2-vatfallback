@@ -61,7 +61,7 @@ class Vatlayer implements ValidationServiceInterface
         }
 
         $apiKey = $this->configuration->getVatlayerApikey();
-        if ($apiKey) {
+        if (empty($apiKey)) {
             throw new InvalidConfigurationException('Vatlayer API is not setup correctly');
         }
 
