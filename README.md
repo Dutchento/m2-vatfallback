@@ -21,6 +21,12 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 3) Use the API endpoint to get company data by VAT number
 `http://domain.com/rest/V1/vat/companylookup/NL133001477B01`
 
+## Installation
+``` shell
+composer require dutchento/m2-vatfallback
+bin/magento setup:upgrade
+```
+
 ## Tested on
 
 - Magento 2.2 Community & Commerce
@@ -42,7 +48,7 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 [1.0.0] ported version of the Magento 1 module
 
 ## Requirements
-- PHP 7
+- PHP >= 7.0
 - GuzzleHTTP
 
 ## Disclaimer
