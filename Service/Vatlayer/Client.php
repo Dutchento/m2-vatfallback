@@ -15,27 +15,16 @@ namespace Dutchento\Vatfallback\Service\Vatlayer;
  */
 class Client extends \GuzzleHttp\Client
 {
-
     /** @var null | array */
     protected static $validationResult = [];
 
-
-    public function __construct(array $config = [])
-    {
-        $config = array_merge([
-            'base_uri' => 'https://apilayer.com/'
-        ], $config);
-
-        parent::__construct($config);
-    }
-
     public function retrieveVatnumberEndpoint(
-            string $vatNumber,
-            string $countryIso2,
-            string $apiKey,
-            int $timeout = 1
+        string $vatNumber,
+        string $countryIso2,
+        string $apiKey,
+        int $timeout = 1,
+        bool $secure = false
     ) {
-
         $cacheKey = $countryIso2 . $vatNumber;
         if (isset(self::$validationResult[$cacheKey])) {
             return self::$validationResult[$cacheKey];
@@ -46,11 +35,14 @@ class Client extends \GuzzleHttp\Client
             'query' => [
                 'access_key' => $apiKey,
                 'vat_number' => $countryIso2 . $vatNumber,
-                'format' => 1
-            ]
+                'format' => 1,
+            ],
         ];
 
-        $response =  $this->request('GET', '/api/validate', $options);
+        $scheme = 'http' . ($secure ? 's' : '');
+        $url = $scheme . '://apilayer.net/api/validate';
+
+        $response = $this->request('GET', $url, $options);
         self::$validationResult[$cacheKey] = $response;
 
         return $response;

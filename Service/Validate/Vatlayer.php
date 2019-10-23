@@ -72,7 +72,8 @@ class Vatlayer implements ValidationServiceInterface
                     $vatNumber,
                     $countryIso2,
                     $apiKey,
-                    $this->configuration->getVatlayerTimeout()
+                    $this->configuration->getVatlayerTimeout(),
+                    $this->configuration->getVatlayerHttpsEnabled()
                 );
         } catch (Exception $exception) {
             throw new ValidationUnavailableException("API unavailable {$error->getMessage()}");
