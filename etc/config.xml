@@ -8,6 +8,7 @@
 
 				<vatlayer_validation>0</vatlayer_validation>
 				<vatlayer_apikey></vatlayer_apikey>
+				<vatlayer_use_https>0</vatlayer_use_https>
 				<vatlayer_timeout>2</vatlayer_timeout>
 
 				<regexp_validation>1</regexp_validation>
