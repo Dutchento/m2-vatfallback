@@ -88,7 +88,7 @@ class Vies implements ValidationServiceInterface
             throw new ValidationUnavailableException("API unavailable returns: status {$response->getStatusCode()} '{$contents}'");
         }
 
-        if (false !== strpos($responseBody, 'No, invalid VAT number')) {
+        if (false !== strpos($contents, 'No, invalid VAT number')) {
             return false;
         }
 
