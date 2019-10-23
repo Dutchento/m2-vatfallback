@@ -51,6 +51,13 @@ class Configuration implements ConfigurationInterface
             ->getConfig(self::XMLPATH_CUSTOMER_VATFALLBACK_VATLAYER_APIKEY);
     }
 
+    public function getVatlayerHttpsEnabled(StoreInterface $store = null): bool
+    {
+        return (bool) $this->storeManager
+            ->getStore($store)
+            ->getConfig(self::XMLPATH_CUSTOMER_VATFALLBACK_VATLAYER_USE_HTTPS);
+    }
+
     public function getVatlayerTimeout(StoreInterface $store = null): int
     {
         return +$this->storeManager

@@ -25,6 +25,10 @@
 					<label>Vatlayer API key</label>
                     <comment><![CDATA[Register with <a href='https://vatlayer.com/product'>Vatlayer.com</a> to obtain an API key]]></comment>
 				</field>
+                <field id="vatlayer_use_https" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="26" translate="label comment" type="select">
+                    <label>Vatlayer HTTPS</label>
+                    <comment><![CDATA[Requires Vatlayer subscription plan >= <a href='https://vatlayer.com/product'>Basic Plan</a>.]]></comment>
+                </field>
 				<field id="vatlayer_timeout" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="28" translate="label comment" type="text">
 					<label>Vatlayer API timeout (seconds)</label>
                     <comment><![CDATA[The lower the less likely to get a hit, more will add to page request time in API, checkout]]></comment>
