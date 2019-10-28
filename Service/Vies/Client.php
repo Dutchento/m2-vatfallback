@@ -27,7 +27,6 @@ class Client extends \GuzzleHttp\Client
         string $merchantVatNumber,
         int $connectionTimeout = 1
     ) {
-
         $options = [
             'connect_timeout' => max(1, $connectionTimeout),
             'query' => [
@@ -42,10 +41,9 @@ class Client extends \GuzzleHttp\Client
         ];
 
         return $this->request(
-            'GET', '
-            /taxation_customs/vies/viesquer.do',
+            'GET',
+            '/taxation_customs/vies/viesquer.do',
             $options
         );
     }
-
 }
