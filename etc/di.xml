@@ -3,6 +3,8 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Dutchento\Vatfallback\Api\CompanyLookupInterface"
                 type="Dutchento\Vatfallback\Api\CompanyLookup"/>
+    <preference for="Dutchento\Vatfallback\Api\Data\CompanyLookupResultInterface"
+                type="Dutchento\Vatfallback\Api\Data\CompanyLookupResult"/>
     <preference for="Dutchento\Vatfallback\Service\ValidateVatInterface"
                 type="Dutchento\Vatfallback\Service\ValidateVat"/>
     <preference for="Dutchento\Vatfallback\Model\VatNumber\ConfigInterface"
