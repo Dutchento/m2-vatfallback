@@ -93,7 +93,7 @@ class Vatlayer implements ValidationServiceInterface
         }
 
         if (isset($result['error'])) {
-            throw new ValidationFailedException('Vatlayer could not be queried ' . $result['error']);
+            throw new ValidationFailedException('Vatlayer could not be queried ' . $result['error']['info']);
         }
 
         if (! isset($result['valid'])) {
