@@ -27,6 +27,7 @@ class Client extends \GuzzleHttp\Client
     ) {
         $cacheKey = $countryIso2 . $vatNumber;
         if (isset(self::$validationResult[$cacheKey])) {
+            self::$validationResult[$cacheKey]->getBody()->rewind();
             return self::$validationResult[$cacheKey];
         }
 
