@@ -22,7 +22,7 @@ interface CompanyLookupInterface
      *
      * @api
      * @param string $vatNumber vatnumber
-     * @return CompanyLookupResultInterface Company data
+     * @return \Dutchento\Vatfallback\Api\Data\CompanyLookupResultInterface Company data
      */
     public function byVatnumber(string $vatNumber): CompanyLookupResultInterface;
 }
