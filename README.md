@@ -29,8 +29,9 @@ bin/magento setup:upgrade
 
 ## Tested on
 
-- Magento 2.2 Community & Commerce
-- Magento 2.3 Community
+- Magento 2.2
+- Magento 2.3
+- Magento 2.4
 
 ## Changelog
 [1.5.0] Better error handling if services are unavailable, no next service checking if 100% sure invalid result
