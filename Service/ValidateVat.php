@@ -10,6 +10,7 @@
 namespace Dutchento\Vatfallback\Service;
 
 use Dutchento\Vatfallback\Service\Exceptions\GenericException;
+use Dutchento\Vatfallback\Service\Exceptions\NoValidationException;
 use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
 use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
 use Dutchento\Vatfallback\Service\Exceptions\ValidationIgnoredException;
@@ -86,9 +87,6 @@ class ValidateVat implements ValidateVatInterface
             }
         }
 
-        return [
-            'result' => false,
-            'service' => 'None'
-        ];
+        throw new NoValidationException('No validation took place');
     }
 }

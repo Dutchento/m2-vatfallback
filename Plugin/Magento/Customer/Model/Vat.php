@@ -10,9 +10,11 @@
 namespace Dutchento\Vatfallback\Plugin\Magento\Customer\Model;
 
 use Dutchento\Vatfallback\Service\CleanNumberString;
+use Dutchento\Vatfallback\Service\Exceptions\NoValidationException;
 use Dutchento\Vatfallback\Service\ValidateVatInterface;
 use Magento\Customer\Model\Vat as Subject;
 use Magento\Framework\DataObject;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class Vat
@@ -28,6 +30,9 @@ class Vat
      */
     private $cleanNumberService;
 
+    /** @var LoggerInterface */
+    protected $logger;
+
     /**
      * Vat constructor.
      * @param ValidateVatInterface $validationService
@@ -35,10 +40,12 @@ class Vat
      */
     public function __construct(
         ValidateVatInterface $validationService,
-        CleanNumberString $cleanNumberService
+        CleanNumberString $cleanNumberService,
+        LoggerInterface $logger
     ) {
         $this->validationService = $validationService;
         $this->cleanNumberService = $cleanNumberService;
+        $this->logger = $logger;
     }
 
     /**
@@ -80,11 +87,17 @@ class Vat
             return $gatewayResponse;
         }
 
-        $response = $this->validationService->byNumberAndCountry($vatNumber, $countryCode);
+        try {
+            $response = $this->validationService->byNumberAndCountry($vatNumber, $countryCode);
 
-        return $response['result'] ?
-            $this->createGatewayResponseObject($vatNumber, true, __('VAT Number is valid.')) :
-            $this->createGatewayResponseObject($vatNumber, false, __('Please enter a valid VAT number.'));
+            return $response['result'] ?
+                $this->createGatewayResponseObject($vatNumber, true, __('VAT Number is valid.')) :
+                $this->createGatewayResponseObject($vatNumber, false, __('Please enter a valid VAT number.'));
+        } catch (NoValidationException $exception) {
+            $this->logger->notice($exception->getMessage());
+        }
+
+        return $gatewayResponse;
     }
 
     /**
