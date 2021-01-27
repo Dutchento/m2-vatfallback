@@ -9,6 +9,7 @@
 
 namespace Dutchento\Vatfallback\Console\Command;
 
+use Dutchento\Vatfallback\Service\Exceptions\NoValidationException;
 use Dutchento\Vatfallback\Service\ValidateVatInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -46,12 +47,16 @@ class Validate extends Command
         $country = $input->getArgument('country');
         $number = $input->getArgument('number');
 
-        $result = $this->validationService->byNumberAndCountry($number, $country);
+        try {
+            $result = $this->validationService->byNumberAndCountry($number, $country);
 
-        if ($result['result']) {
-            $output->writeln("Success is: {$result['result']}, with service {$result['service']}");
-        } else {
-            $output->writeln("Invalid VAT number, with service {$result['service']}");
+            if ($result['result']) {
+                $output->writeln("Success is: {$result['result']}, with service {$result['service']}");
+            } else {
+                $output->writeln("Invalid VAT number, with service {$result['service']}");
+            }
+        } catch (NoValidationException $exception) {
+            $output->writeln("No validation took place");
         }
     }
 
