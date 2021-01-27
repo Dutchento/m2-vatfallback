@@ -3,6 +3,7 @@
 namespace Dutchento\Vatfallback\Test\Unit\Service;
 
 use Dutchento\Vatfallback\Service\CleanNumberString;
+use Dutchento\Vatfallback\Service\Exceptions\NoValidationException;
 use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
 use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
 use Dutchento\Vatfallback\Service\Exceptions\ValidationIgnoredException;
@@ -43,10 +44,9 @@ class ValidateVatTest extends TestCase
             $cleanNumberString
         );
 
-        $this->assertSame([
-            'result' => false,
-            'service' => 'None'
-        ], $validateVat->byNumberAndCountry('123465', 'xx'));
+        $this->expectException(NoValidationException::class);
+
+        $validateVat->byNumberAndCountry('123465', 'xx');
     }
 
     public function testByNumberAndCountryExitAtFirstValidationIfInvalid()
@@ -156,6 +156,23 @@ class ValidateVatTest extends TestCase
     }
 
     /**
+     * @param $result
+     * @param $validators
+     * @dataProvider dataProviderForFallbackWithExceptionScenarios
+     */
+    public function testByNumberAndCountryFallbackWithException($result, $validators)
+    {
+        $validateVat = new ValidateVat(
+            $this->loggerInterfaceMock,
+            $this->cleanNumberStringMock,
+            $validators
+        );
+
+        $this->expectException(NoValidationException::class);
+        $validateVat->byNumberAndCountry('123456', 'xx');
+    }
+
+    /**
      * Data provider for remote services test and offline
      *
      * @return array
@@ -220,14 +237,6 @@ class ValidateVatTest extends TestCase
                     'regexp' => false
                 ])
             ],
-            'R: [false, none]: 1: *, 2: -, 3: ?' => [
-                $this->createValidatorResult(false, 'None'),
-                $this->createValidatorMock([
-                    'vies' => $this->throwException(new ValidationDisabledException),
-                    'vatlayer' => $this->throwException(new ValidationIgnoredException),
-                    'regexp' => $this->throwException(new ValidationUnavailableException)
-                ])
-            ],
             'R: [false, vatlayer]: 1: *, 2: #, 3: ?' => [
                 $this->createValidatorResult(false, 'vatlayer'),
                 $this->createValidatorMock([
@@ -237,7 +246,25 @@ class ValidateVatTest extends TestCase
                 ])
             ],
         ];
+    }
 
+    /**
+     * Data provider for remote services test and offline where an exception is thrown
+     *
+     * @return array
+     */
+    public function dataProviderForFallbackWithExceptionScenarios(): array
+    {
+        return [
+            'R: [false, none]: 1: *, 2: -, 3: ?' => [
+                $this->createValidatorResult(false, 'None'),
+                $this->createValidatorMock([
+                    'vies' => $this->throwException(new ValidationDisabledException),
+                    'vatlayer' => $this->throwException(new ValidationIgnoredException),
+                    'regexp' => $this->throwException(new ValidationUnavailableException)
+                ])
+            ],
+        ];
     }
 
     public function createValidatorResult($result, $service)
