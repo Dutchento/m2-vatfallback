@@ -101,13 +101,13 @@ class Vat
      * @return DataObject
      * @throws \Exception
      */
-    public function createGatewayResponseObject(string $vatNumber, bool $success, string $message): DataObject
+    public function createGatewayResponseObject(string $vatNumber, bool $isValid, string $message): DataObject
     {
         return new DataObject([
-            'is_valid' => $success,
+            'is_valid' => $isValid,
             'request_date' => (new \DateTimeImmutable())->format('Y-m-d'),
             'request_identifier' => $vatNumber,
-            'request_success' => $success,
+            'request_success' => true,
             'request_message' => $message,
         ]);
     }
