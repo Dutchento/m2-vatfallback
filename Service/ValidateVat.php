@@ -76,11 +76,6 @@ class ValidateVat implements ValidateVatInterface
             } catch (ValidationFailedException $exception) {
                 // validation failed, a problem occured
                 $this->logger->error("vatfallback {$validationName} failed: {$exception->getMessage()}");
-
-                return [
-                    'result' => false,
-                    'service' => $validationName
-                ];
             } catch (GenericException $exception) {
                 // Generic exception, log and continue
                 $this->logger->error("vatfallback {$validationName} error: {$exception->getMessage()}");
