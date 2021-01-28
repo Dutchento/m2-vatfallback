@@ -3,6 +3,7 @@
 namespace Dutchento\Vatfallback\Test\Unit\Service;
 
 use Dutchento\Vatfallback\Service\CleanNumberString;
+use Dutchento\Vatfallback\Service\Exceptions\GenericException;
 use Dutchento\Vatfallback\Service\Exceptions\NoValidationException;
 use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
 use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
@@ -107,7 +108,7 @@ class ValidateVatTest extends TestCase
     {
         $validationMock = $this->createMock(ValidationServiceInterface::class);
 
-        $validationMock->expects($this->exactly(4))
+        $validationMock->expects($this->exactly(5))
             ->method('getValidationServiceName')
             ->willReturn(
                 'disabled',
@@ -117,14 +118,14 @@ class ValidateVatTest extends TestCase
                 'valid'
             );
 
-        $validationMock->expects($this->exactly(4))
+        $validationMock->expects($this->exactly(5))
             ->method('validateVATNumber')
             ->willReturn(
                 $this->throwException(new ValidationDisabledException('disabled-exception')),
                 $this->throwException(new ValidationIgnoredException('ignored-exception')),
                 $this->throwException(new ValidationUnavailableException('unavailable-exception')),
                 $this->throwException(new ValidationFailedException('failed-exception')),
-                true
+                $this->throwException(new GenericException('generic-exception'))
             );
 
         $validateVat = new ValidateVat(
@@ -133,10 +134,8 @@ class ValidateVatTest extends TestCase
             [$validationMock, $validationMock, $validationMock, $validationMock, $validationMock]
         );
 
-        $this->assertSame([
-            'result' => false,
-            'service' => 'failed'
-        ], $validateVat->byNumberAndCountry('123456', 'xx'));
+        $this->expectException(NoValidationException::class);
+        $validateVat->byNumberAndCountry('123456', 'xx');
     }
 
     /**
@@ -237,14 +236,6 @@ class ValidateVatTest extends TestCase
                     'regexp' => false
                 ])
             ],
-            'R: [false, vatlayer]: 1: *, 2: #, 3: ?' => [
-                $this->createValidatorResult(false, 'vatlayer'),
-                $this->createValidatorMock([
-                    'vies' => $this->throwException(new ValidationDisabledException),
-                    'vatlayer' => $this->throwException(new ValidationFailedException),
-                    'regexp' => $this->throwException(new ValidationUnavailableException)
-                ])
-            ],
         ];
     }
 
@@ -261,6 +252,14 @@ class ValidateVatTest extends TestCase
                 $this->createValidatorMock([
                     'vies' => $this->throwException(new ValidationDisabledException),
                     'vatlayer' => $this->throwException(new ValidationIgnoredException),
+                    'regexp' => $this->throwException(new ValidationUnavailableException)
+                ])
+            ],
+            'R: [false, vatlayer]: 1: *, 2: #, 3: ?' => [
+                $this->createValidatorResult(false, 'vatlayer'),
+                $this->createValidatorMock([
+                    'vies' => $this->throwException(new ValidationDisabledException),
+                    'vatlayer' => $this->throwException(new ValidationFailedException),
                     'regexp' => $this->throwException(new ValidationUnavailableException)
                 ])
             ],
