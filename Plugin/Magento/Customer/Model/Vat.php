@@ -14,6 +14,7 @@ use Dutchento\Vatfallback\Service\Exceptions\NoValidationException;
 use Dutchento\Vatfallback\Service\ValidateVatInterface;
 use Magento\Customer\Model\Vat as Subject;
 use Magento\Framework\DataObject;
+use Magento\Framework\Phrase;
 
 /**
  * Class Vat
@@ -97,11 +98,11 @@ class Vat
     /**
      * @param string $vatNumber
      * @param bool $success
-     * @param string $message
+     * @param Phrase $message
      * @return DataObject
      * @throws \Exception
      */
-    public function createGatewayResponseObject(string $vatNumber, bool $isValid, \Magento\Framework\Phrase $message): DataObject
+    public function createGatewayResponseObject(string $vatNumber, bool $isValid, Phrase $message): DataObject
     {
         return new DataObject([
             'is_valid' => $isValid,
