@@ -101,7 +101,7 @@ class Vat
      * @return DataObject
      * @throws \Exception
      */
-    public function createGatewayResponseObject(string $vatNumber, bool $isValid, string $message): DataObject
+    public function createGatewayResponseObject(string $vatNumber, bool $isValid, \Magento\Framework\Phrase $message): DataObject
     {
         return new DataObject([
             'is_valid' => $isValid,
