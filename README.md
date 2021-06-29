@@ -21,6 +21,8 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 3) Use the API endpoint to get company data by VAT number
 `http://domain.com/rest/V1/vat/companylookup/NL133001477B01`
 
+4) Add a GraphQL endpoint by installing [elgentos/m2-vatfallback-graph-ql](https://github.com/elgentos/m2-vatfallback-graph-ql)
+
 ## Installation
 ``` shell
 composer require dutchento/m2-vatfallback
