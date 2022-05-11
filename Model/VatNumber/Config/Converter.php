@@ -63,7 +63,7 @@ class Converter implements ConverterInterface
     {
         $pattern = trim($pattern);
         $pattern = '/' . trim($pattern, '/') . '/';
-        if (preg_match($pattern, null) === false) {
+        if (preg_match($pattern, '') === false) {
             throw new \InvalidArgumentException("Regex pattern '{$pattern}' does not appear to be valid");
         }
 
