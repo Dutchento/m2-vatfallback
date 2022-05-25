@@ -28,7 +28,7 @@ class CleanNumberString
                 '/[^0-9a-z]+/i'
             ],
             '',
-            $vatInput
+            $vatInput ?? ''
         );
     }
 }
