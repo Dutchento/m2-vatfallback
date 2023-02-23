@@ -11,6 +11,7 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 - Custom VIES check (this is not the official endpoint but an internal one)
 - vatlayer.com check
 - Regex fallback check for following countries; AT, BE, CZ, DE, CY, DK, EE, GR, ES, FI, FR, GB, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, SE, SI, SK
+- Caching of previous results
 
 ## Features
 1) A plugin wraps the existing Vat check in Magento Customer implementing various services as fallback.

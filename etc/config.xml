@@ -12,6 +12,9 @@
 				<vatlayer_timeout>2</vatlayer_timeout>
 
 				<regexp_validation>1</regexp_validation>
+
+                <cache_validation>0</cache_validation>
+                <cache_lifetime>86400</cache_lifetime>
 			</vatfallback>
 		</customer>
 	</default>

@@ -11,6 +11,8 @@
                 type="Dutchento\Vatfallback\Model\VatNumber\Config"/>
     <preference for="Dutchento\Vatfallback\Service\ConfigurationInterface"
                 type="Dutchento\Vatfallback\Service\Configuration"/>
+    <preference for="Dutchento\Vatfallback\Service\CacheInterface"
+                type="Dutchento\Vatfallback\Service\Cache"/>
 
     <type name="Magento\Customer\Model\Vat">
         <plugin name="Dutchento_Vatfallback_Plugin_Magento_Customer_Model_Vat" sortOrder="10"
@@ -57,6 +59,7 @@
     <type name="Dutchento\Vatfallback\Service\ValidateVat">
         <arguments>
             <argument name="validationServices" xsi:type="array">
+                <item name="cache" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Cache</item>
                 <item name="vies" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Vies</item>
                 <item name="vatlayer" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Vatlayer</item>
                 <item name="regexp" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Regex</item>

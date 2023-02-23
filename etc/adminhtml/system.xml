@@ -40,6 +40,20 @@
 					<comment><![CDATA[Use regular expressions to validate vat numbers]]></comment>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
+
+                <field id="cache_validation" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="40" translate="label comment" type="select">
+                    <label>Cache results</label>
+                    <comment><![CDATA[Use cache to temporaily save previous results to reduce 3rd party API calls]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cache_lifetime" showInDefault="1" showInStore="0" showInWebsite="0" sortOrder="42" translate="label" type="text">
+                    <label>Cache lifetime (seconds)</label>
+                    <comment>Please enter at least 60 and at most 3153600000 (one year).</comment>
+                    <validate>validate-digits validate-digits-range digits-range-0-3153600000</validate>
+                    <depends>
+                        <field id="cache_validation">1</field>
+                    </depends>
+                </field>
 			</group>
 		</section>
 	</system>
