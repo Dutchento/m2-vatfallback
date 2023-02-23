@@ -29,23 +29,29 @@ class ValidateVat implements ValidateVatInterface
     /** @var CleanNumberString */
     protected $cleanNumberString;
 
+    /** @var CacheInterface */
+    protected $cache;
+
     /** @var ValidationServiceInterface[] */
     protected $validationServices;
 
     /**
      * ValidateVat constructor.
      *
-     * @param LoggerInterface $logger
-     * @param CleanNumberString $cleanNumberString
+     * @param LoggerInterface              $logger
+     * @param CleanNumberString            $cleanNumberString
+     * @param CacheInterface               $cache
      * @param ValidationServiceInterface[] $validationServices
      */
     public function __construct(
-        LoggerInterface $logger,
+        LoggerInterface   $logger,
         CleanNumberString $cleanNumberString,
-        array $validationServices = []
+        CacheInterface    $cache,
+        array             $validationServices = []
     ) {
-        $this->logger = $logger;
-        $this->cleanNumberString = $cleanNumberString;
+        $this->logger             = $logger;
+        $this->cleanNumberString  = $cleanNumberString;
+        $this->cache              = $cache;
         $this->validationServices = $validationServices;
     }
 
@@ -61,8 +67,13 @@ class ValidateVat implements ValidateVatInterface
             $validationName = $validationService->getValidationServiceName();
             try {
                 $result = $validationService->validateVATNumber($cleanVatString, $countryIso2);
+                if ($validationName === $this->cache->getValidationServiceName()) {
+                    $validationName .= $this->cache->getUsedValidationServiceName($cleanVatString, $countryIso2);
+                } else {
+                    $this->cache->save($cleanVatString, $countryIso2, $result, $validationName);
+                }
                 return [
-                    'result' => $result,
+                    'result'  => $result,
                     'service' => $validationName
                 ];
             } catch (ValidationDisabledException $exception) {

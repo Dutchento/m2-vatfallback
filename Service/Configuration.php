@@ -1,13 +1,15 @@
 <?php
-
-
+/**
+ * Dutchento Vatfallback
+ * Provides free VAT fallback mechanism
+ * Copyright (C) 2018 Dutchento
+ *
+ * MIT license applies to this software
+ */
 namespace Dutchento\Vatfallback\Service;
 
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Api\Data\StoreInterface;
-use Magento\Store\Model\ScopeInterface;
-use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 
 
@@ -70,5 +72,19 @@ class Configuration implements ConfigurationInterface
         return (bool)$this->storeManager
             ->getStore($store)
             ->getConfig(self::XMLPATH_CUSTOMER_VATFALLBACK_REGEXP_VALIDATION);
+    }
+
+    public function isCacheValidation(StoreInterface $store = null): bool
+    {
+        return (bool)$this->storeManager
+            ->getStore($store)
+            ->getConfig(self::XMLPATH_CUSTOMER_VATFALLBACK_CACHE_VALIDATION);
+    }
+
+    public function getCacheLifetime(StoreInterface $store = null): int
+    {
+        return (bool)$this->storeManager
+            ->getStore($store)
+            ->getConfig(self::XMLPATH_CUSTOMER_VATFALLBACK_CACHE_LIFETIME);
     }
 }
