@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
 	<type name="vat_check" translate="label,description" instance="Dutchento\Vatfallback\Model\Cache\VatCheck">
-		<label>vat_check</label>
-		<description>Cache recent vat-check results to not overload APIs</description>
+		<label>Vat-check</label>
+		<description>Cache recent vat-fallback-check results to not overload APIs (VIES, Vatlayer)</description>
 	</type>
 </config>
