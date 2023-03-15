@@ -1,49 +1,61 @@
 <?php
-
+/**
+ * Dutchento Vatfallback
+ * Provides free VAT fallback mechanism
+ * Copyright (C) 2023 Dutchento
+ *
+ * MIT license applies to this software
+ */
 
 namespace Dutchento\Vatfallback\Service\Vies;
 
-
 /**
  * Class Client
- * @package Dutchento\Vatfallback\Service\Vatlayer
+ * @package Dutchento\Vatfallback\Service\Vies
  */
-class Client extends \GuzzleHttp\Client
+class Client
 {
+    /** WSDL of VAT validation service */
+    public const VAT_VALIDATION_WSDL_URL = 'https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
 
-    public function __construct(array $config = [])
-    {
-        $config = array_merge([
-            'base_uri' => 'http://ec.europa.eu'
-        ], $config);
+    /** @var null | mixed */
+    protected static $validationResult = [];
 
-        parent::__construct($config);
-    }
-
-    public function getTaxationCustomsVies(
+    public function getViesResponse(
         string $countryIso,
         string $vatNumber,
-        string $merchantCountryCode,
-        string $merchantVatNumber,
-        int $connectionTimeout = 1
-    ) {
-        $options = [
-            'connect_timeout' => max(1, $connectionTimeout),
-            'query' => [
-                'ms' => $countryIso,
-                'iso' => $countryIso,
-                'vat' => $vatNumber,
-                'requesterMs' => $merchantCountryCode,
-                'requesterIso' => $merchantCountryCode,
-                'requesterVat' => $merchantVatNumber,
-                'BtnSubmitVat' => 'Verify',
-            ],
-        ];
+        int    $timeout = 1,
+    ): mixed {
+        $cacheKey = $countryIso . $vatNumber;
+        if (isset(self::$validationResult[$cacheKey])) {
+            self::$validationResult[$cacheKey]->getBody()->rewind();
+            return self::$validationResult[$cacheKey];
+        }
+        $soapClient = $this->createVatNumberValidationSoapClient(false, $timeout);
 
-        return $this->request(
-            'GET',
-            '/taxation_customs/vies/viesquer.do',
-            $options
-        );
+        $requestParams                = [];
+        $requestParams['countryCode'] = $countryIso;
+        $requestParams['vatNumber']   = $vatNumber;
+
+        // Send request to service
+        $result = $soapClient->checkVatApprox($requestParams);
+
+        self::$validationResult[$cacheKey] = $result;
+
+        return $result;
+    }
+
+    /**
+     * Create SOAP client based on VAT validation service WSDL
+     *
+     * @param boolean $trace
+     * @return \SoapClient
+     */
+    protected function createVatNumberValidationSoapClient($trace = false, $timeout = 1)
+    {
+        return new \SoapClient(self::VAT_VALIDATION_WSDL_URL, [
+            'trace'              => $trace,
+            'connection_timeout' => max(1, $timeout)
+        ]);
     }
 }
