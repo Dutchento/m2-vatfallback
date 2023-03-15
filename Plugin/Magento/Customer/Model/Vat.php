@@ -62,22 +62,16 @@ class Vat
         $requesterVatNumber = ''
     ): DataObject {
         /*
-         * Clean the vat number before running the core vat check.
+         * Clean the vat number before running the vat check.
          * For example, a vat number like 'BE 0123.456.789' would return false,
          * while '0123456789' would return true.
          */
         $vatNumber = $this->cleanNumberService->returnStrippedString($vatNumber);
 
         /** @var DataObject $gatewayResponse */
-        $gatewayResponse = $proceed($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber);
-
-        // If the result is false we start trying the fallback
-        if ($gatewayResponse->getRequestSuccess() !== false) {
-            return $gatewayResponse;
-        }
+        $gatewayResponse = $this->createGatewayResponseObject($vatNumber, false, __('Error during VAT Number verification.'), false);
 
         // Should we even be checking for VAT?
-        // This check is duplicated in the original checkVatNumber call
         if (!$subject->canCheckVatNumber($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber)) {
             return $gatewayResponse;
         }
@@ -102,13 +96,13 @@ class Vat
      * @return DataObject
      * @throws \Exception
      */
-    public function createGatewayResponseObject(string $vatNumber, bool $isValid, Phrase $message): DataObject
+    public function createGatewayResponseObject(string $vatNumber, bool $isValid, Phrase $message, string $requestDate = null, bool $requestSuccess = true): DataObject
     {
         return new DataObject([
             'is_valid' => $isValid,
-            'request_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+            'request_date' => $requestDate !== null ? $requestDate : (new \DateTimeImmutable())->format('Y-m-d'),
             'request_identifier' => $vatNumber,
-            'request_success' => true,
+            'request_success' => $requestSuccess,
             'request_message' => $message,
         ]);
     }
