@@ -1,20 +1,19 @@
 # Vatfallback for Magento 2
 
-Vatfallback module provides an extra API based validation and a fallback offline regex validation 
+Vatfallback module provides an API based validation and a fallback offline regex validation 
 for the unstable VIES database used by Magento
 
 Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfallback/).
 
 ## Supported services
 
-- Built in Magento VIES check
-- Custom VIES check (this is not the official endpoint but an internal one)
+- VIES check (this is not the official endpoint but an internal one)
 - vatlayer.com check
 - Regex fallback check for following countries; AT, BE, CZ, DE, CY, DK, EE, GR, ES, FI, FR, GB, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, SE, SI, SK
 - Caching of previous results
 
 ## Features
-1) A plugin wraps the existing Vat check in Magento Customer implementing various services as fallback.
+1) A plugin that replaces the existing VAT check in Magento Customer implementing various services with means of fallback.
 
 2) Use the console task:
 `./bin/magento vat:validate NL NL133001477B01`
@@ -23,6 +22,8 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 `http://domain.com/rest/V1/vat/companylookup/NL133001477B01`
 
 4) Add a GraphQL endpoint by installing [elgentos/m2-vatfallback-graph-ql](https://github.com/elgentos/m2-vatfallback-graph-ql)
+
+5) Caching service for VAT request (be sure to enable the VAT cache under Cache Management)
 
 ## Installation
 ``` shell
@@ -37,6 +38,8 @@ bin/magento setup:upgrade
 - Magento 2.4
 
 ## Changelog
+[2.0.0] Add Official VIES as a service and don't use core Magento VIES request, added a caching service
+
 [1.5.0] Better error handling if services are unavailable, no next service checking if 100% sure invalid result
 
 [1.4.0] Refactor __constructors, decoupled validationservices from validator
