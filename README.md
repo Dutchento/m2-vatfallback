@@ -38,21 +38,7 @@ bin/magento setup:upgrade
 - Magento 2.4
 
 ## Changelog
-[2.0.0] Add Official VIES as a service and don't use core Magento VIES request, added a caching service
-
-[1.5.0] Better error handling if services are unavailable, no next service checking if 100% sure invalid result
-
-[1.4.0] Refactor __constructors, decoupled validationservices from validator
-
-[1.3.0] Regex validation now configurable via XML. Improved tests and regex validation
-
-[1.2.0] added a timeout sys conf value for connecting to APIs
-
-[1.1.1] fixed a logic error in calling fallback services including a false positives fix for the unofficial VIES endpoint by Laura Folco
-
-[1.1.0] add an API endpoint for company data
-
-[1.0.0] ported version of the Magento 1 module
+See https://github.com/Dutchento/m2-vatfallback/releases
 
 ## Requirements
 - PHP >= 7.0
