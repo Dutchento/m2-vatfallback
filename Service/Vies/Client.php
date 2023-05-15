@@ -28,7 +28,6 @@ class Client
     ): mixed {
         $cacheKey = $countryIso . $vatNumber;
         if (isset(self::$validationResult[$cacheKey])) {
-            self::$validationResult[$cacheKey]->getBody()->rewind();
             return self::$validationResult[$cacheKey];
         }
         $soapClient = $this->createVatNumberValidationSoapClient(false, $timeout);
