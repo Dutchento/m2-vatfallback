@@ -96,8 +96,16 @@ class Vatlayer implements ValidationServiceInterface
             throw new ValidationFailedException('Vatlayer could not be queried ' . $result['error']['info']);
         }
 
-        if (! isset($result['valid'])) {
+        if ((! isset($result['valid'])) || (! isset($result['database']))) {
             throw new ValidationIgnoredException('Vatlayer did not return validation');
+        }
+
+        if ($result['database'] === 'failure') {
+            throw new ValidationFailedException('Vatlayer returns: database failure (could not connect to member state)');
+        }
+
+        if ($result['database'] !== 'ok') {
+            throw new ValidationFailedException('Vatlayer database not ok');
         }
 
         return (bool)$result['valid'];
