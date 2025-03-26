@@ -9,23 +9,46 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
-use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
+/**
+ * Class Regex
+ * @package Dutchento\Vatfallback\Service\Validate
+ */
 
+use Dutchento\Vatfallback\Model\VatNumber\ConfigInterface;
+use Dutchento\Vatfallback\Service\ConfigurationInterface;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
+
+/**
+ * Class Regex
+ * @package Dutchento\Vatfallback\Service\Validate
+ */
 class Regex implements ValidationServiceInterface
 {
-    /**
-     * @var array
-     */
-    private $vatPatternMap = [];
+    /** @var ConfigurationInterface */
+    protected $configuration;
+
+    /** @var ConfigInterface */
+    protected $vatNumberConfig;
 
     /**
      * Regex constructor.
      * @param ConfigInterface $vatNumberConfig
      */
-    public function __construct(ConfigInterface $vatNumberConfig)
+    public function __construct(
+            ConfigurationInterface $configuration,
+            ConfigInterface $vatNumberConfig
+    ) {
+        $this->configuration = $configuration;
+        $this->vatNumberConfig = $vatNumberConfig;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValidationServiceName(): string
     {
-        // get the patterns from the configuration
-        $this->vatPatternMap = $vatNumberConfig->get();
+        return 'RegExp';
     }
 
     /**
@@ -33,9 +56,21 @@ class Regex implements ValidationServiceInterface
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
-        // as fallback use a pattern that always validates
-        $regex = $this->vatPatternMap[$countryIso2] ?? '.*' ;
+        if (!$this->configuration->isRegExpValidation()) {
+            throw new ValidationDisabledException('RegExp is disabled');
+        }
 
-        return (bool)preg_match($regex, $vatNumber);
+        $vatPatternMap = $this->vatNumberConfig->get();
+
+        // as fallback use a pattern that always validates
+        $regex = $vatPatternMap[$countryIso2] ?? '#.*#';
+
+        try {
+            $result = preg_match($regex, $vatNumber);
+        } catch (\Exception $exception) {
+            throw new ValidationFailedException("RegExp error occured validating '{$vatNumber}' against '{$regex}'");
+        }
+
+        return $result > 0;
     }
 }

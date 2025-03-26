@@ -10,10 +10,16 @@
 namespace Dutchento\Vatfallback\Plugin\Magento\Customer\Model;
 
 use Dutchento\Vatfallback\Service\CleanNumberString;
+use Dutchento\Vatfallback\Service\Exceptions\NoValidationException;
 use Dutchento\Vatfallback\Service\ValidateVatInterface;
 use Magento\Customer\Model\Vat as Subject;
 use Magento\Framework\DataObject;
+use Magento\Framework\Phrase;
 
+/**
+ * Class Vat
+ * @package Dutchento\Vatfallback\Plugin\Magento\Customer\Model
+ */
 class Vat
 {
     /** @var ValidateVatInterface */
@@ -32,8 +38,7 @@ class Vat
     public function __construct(
         ValidateVatInterface $validationService,
         CleanNumberString $cleanNumberService
-    )
-    {
+    ) {
         $this->validationService = $validationService;
         $this->cleanNumberService = $cleanNumberService;
     }
@@ -43,9 +48,10 @@ class Vat
      * @param callable $proceed
      * @param $countryCode
      * @param $vatNumber
-     * @param $requesterCountryCode
-     * @param $requesterVatNumber
+     * @param string $requesterCountryCode
+     * @param string $requesterVatNumber
      * @return DataObject
+     * @throws \Exception
      */
     public function aroundCheckVatNumber(
         Subject $subject,
@@ -54,49 +60,49 @@ class Vat
         $vatNumber,
         $requesterCountryCode = '',
         $requesterVatNumber = ''
-    ): DataObject
-    {
+    ): DataObject {
         /*
-         * Clean the vat number before running the core vat check.
+         * Clean the vat number before running the vat check.
          * For example, a vat number like 'BE 0123.456.789' would return false,
          * while '0123456789' would return true.
          */
         $vatNumber = $this->cleanNumberService->returnStrippedString($vatNumber);
 
         /** @var DataObject $gatewayResponse */
-        $gatewayResponse = $proceed($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber);
-
-        // If the result is false we start trying the fallback
-        if ($gatewayResponse->getRequestSuccess() !== false) {
-            return $gatewayResponse;
-        }
+        $gatewayResponse = $this->createGatewayResponseObject($vatNumber, false, __('Error during VAT Number verification.'), false);
 
         // Should we even be checking for VAT?
-        // This check is duplicated in the original checkVatNumber call
         if (!$subject->canCheckVatNumber($countryCode, $vatNumber, $requesterCountryCode, $requesterVatNumber)) {
             return $gatewayResponse;
         }
 
-        $response = $this->validationService->byNumberAndCountry($vatNumber, $countryCode);
+        try {
+            $response = $this->validationService->byNumberAndCountry($vatNumber, $countryCode);
 
-        return $response['result'] ?
-            $this->createGatewayResponseObject($vatNumber, true, __('VAT Number is valid.')) :
-            $this->createGatewayResponseObject($vatNumber, false, __('Please enter a valid VAT number.'));
+            return $response['result'] ?
+                $this->createGatewayResponseObject($vatNumber, true, __('VAT Number is valid.')) :
+                $this->createGatewayResponseObject($vatNumber, false, __('Please enter a valid VAT number.'));
+        } catch (NoValidationException $exception) {
+
+        }
+
+        return $gatewayResponse;
     }
 
     /**
      * @param string $vatNumber
      * @param bool $success
-     * @param string $message
+     * @param Phrase $message
      * @return DataObject
+     * @throws \Exception
      */
-    public function createGatewayResponseObject(string $vatNumber, bool $success, string $message): DataObject
+    public function createGatewayResponseObject(string $vatNumber, bool $isValid, Phrase $message, string $requestDate = null, bool $requestSuccess = true): DataObject
     {
         return new DataObject([
-            'is_valid' => $success,
-            'request_date' => (new \DateTimeImmutable())->format('Y-m-d'),
+            'is_valid' => $isValid,
+            'request_date' => $requestDate !== null ? $requestDate : (new \DateTimeImmutable())->format('Y-m-d'),
             'request_identifier' => $vatNumber,
-            'request_success' => $success,
+            'request_success' => $requestSuccess,
             'request_message' => $message,
         ]);
     }

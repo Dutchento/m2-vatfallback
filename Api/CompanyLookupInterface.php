@@ -9,6 +9,12 @@
 
 namespace Dutchento\Vatfallback\Api;
 
+use Dutchento\Vatfallback\Api\Data\CompanyLookupResultInterface;
+
+/**
+ * Interface CompanyLookupInterface
+ * @package Dutchento\Vatfallback\Api
+ */
 interface CompanyLookupInterface
 {
     /**
@@ -16,7 +22,7 @@ interface CompanyLookupInterface
      *
      * @api
      * @param string $vatNumber vatnumber
-     * @return array Company data
+     * @return \Dutchento\Vatfallback\Api\Data\CompanyLookupResultInterface Company data
      */
-    public function byVatnumber(string $vatNumber): array;
+    public function byVatnumber(string $vatNumber): CompanyLookupResultInterface;
 }

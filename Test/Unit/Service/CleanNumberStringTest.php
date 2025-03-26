@@ -11,6 +11,10 @@ namespace Dutchento\Vatfallback\Test\Unit\Service;
 
 use Dutchento\Vatfallback\Service\CleanNumberString;
 
+/**
+ * Class CleanNumberStringTest
+ * @package Dutchento\Vatfallback\Test\Unit\Service
+ */
 class CleanNumberStringTest extends \PHPUnit\Framework\TestCase
 {
     /**

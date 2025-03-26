@@ -9,44 +9,50 @@
 
 namespace Dutchento\Vatfallback\Service;
 
-use Dutchento\Vatfallback\Service\Validate\FailedValidationException;
-use Dutchento\Vatfallback\Service\Validate\Regex;
-use Dutchento\Vatfallback\Service\Validate\Vatlayer;
-use Dutchento\Vatfallback\Service\Validate\Vies;
-use Magento\Framework\App\Config\ScopeConfigInterface;
+use Dutchento\Vatfallback\Service\Exceptions\GenericException;
+use Dutchento\Vatfallback\Service\Exceptions\NoValidationException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationIgnoredException;
+use Dutchento\Vatfallback\Service\Validate\ValidationServiceInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Class ValidateVat
+ * @package Dutchento\Vatfallback\Service
+ */
 class ValidateVat implements ValidateVatInterface
 {
-    /** @var LoggerInterface  */
+    /** @var LoggerInterface */
     protected $logger;
 
-    /** @var Vatlayer */
-    protected $vatLayerService;
+    /** @var CleanNumberString */
+    protected $cleanNumberString;
 
-    /** @var Vies */
-    protected $viesService;
+    /** @var CacheInterface */
+    protected $cache;
 
-    /** @var Regex */
-    protected $regexService;
+    /** @var ValidationServiceInterface[] */
+    protected $validationServices;
 
     /**
-     * Vat constructor.
-     * @param LoggerInterface $logger
-     * @param Vatlayer $vatLayerService
-     * @param Vies $viesService
-     * @param Regex $regexService
+     * ValidateVat constructor.
+     *
+     * @param LoggerInterface              $logger
+     * @param CleanNumberString            $cleanNumberString
+     * @param CacheInterface               $cache
+     * @param ValidationServiceInterface[] $validationServices
      */
     public function __construct(
-        LoggerInterface $logger,
-        Vatlayer $vatLayerService,
-        Vies $viesService,
-        Regex $regexService
+        LoggerInterface   $logger,
+        CleanNumberString $cleanNumberString,
+        CacheInterface    $cache,
+        array             $validationServices = []
     ) {
-        $this->logger = $logger;
-        $this->vatLayerService = $vatLayerService;
-        $this->viesService = $viesService;
-        $this->regexService = $regexService;
+        $this->logger             = $logger;
+        $this->cleanNumberString  = $cleanNumberString;
+        $this->cache              = $cache;
+        $this->validationServices = $validationServices;
     }
 
     /**
@@ -54,41 +60,39 @@ class ValidateVat implements ValidateVatInterface
      */
     public function byNumberAndCountry(string $vatInput, string $countryIso2): array
     {
-        $cleanVatString = (new CleanNumberString())->returnStrippedString($vatInput);
+        $cleanVatString = $this->cleanNumberString->returnStrippedString($vatInput);
 
-        // use the unofficial VIES api
-        try {
-            if ((bool)$this->viesService->validateVATNumber($cleanVatString, $countryIso2)) {
+        /** @var ValidationServiceInterface $validationService */
+        foreach ($this->validationServices as $validationService) {
+            $validationName = $validationService->getValidationServiceName();
+            try {
+                $result = $validationService->validateVATNumber($cleanVatString, $countryIso2);
+                if ($validationName === $this->cache->getValidationServiceName()) {
+                    $validationName .= $this->cache->getUsedValidationServiceName($cleanVatString, $countryIso2);
+                } else {
+                    $this->cache->save($cleanVatString, $countryIso2, $result, $validationName);
+                }
                 return [
-                    'result' => true,
-                    'service' => 'vies'
+                    'result'  => $result,
+                    'service' => $validationName
                 ];
+            } catch (ValidationDisabledException $exception) {
+                // validation disabled, proceed next
+                $this->logger->notice("vatfallback {$validationName} disabled: {$exception->getMessage()}");
+
+            } catch (ValidationIgnoredException $exception) {
+                // validation ignored, proceed next
+                $this->logger->notice("vatfallback {$validationName} ignored: {$exception->getMessage()}");
+
+            } catch (ValidationFailedException $exception) {
+                // validation failed, a problem occured
+                $this->logger->error("vatfallback {$validationName} failed: {$exception->getMessage()}");
+            } catch (GenericException $exception) {
+                // Generic exception, log and continue
+                $this->logger->error("vatfallback {$validationName} error: {$exception->getMessage()}");
             }
-        } catch (FailedValidationException $error) {
-            $this->logger->error("vatfallback VIES error: {$error->getMessage()}");
         }
 
-        // use the Vatlayer api
-        try { // if VIES failed or indicates invalid recheck with vatlayer. VIES is sometimes incorrect
-            return [
-                'result' => (bool)$this->vatLayerService->validateVATNumber($cleanVatString, $countryIso2),
-                'service' => 'vatlayer'
-            ];
-        } catch (FailedValidationException $error) {
-            $this->logger->error("vatfallback Vatlayer error: {$error->getMessage()}");
-        }
-
-        // offline Regex validation if all fails
-        if ($this->regexService->validateVATNumber($cleanVatString, $countryIso2)) {
-            return [
-                'result' => true,
-                'service' => 'regex'
-            ];
-        }
-
-        return [
-            'result' => false,
-            'service' => null
-        ];
+        throw new NoValidationException('No validation took place');
     }
 }

@@ -6,7 +6,6 @@
  *
  * MIT license applies to this software
  */
-
 namespace Dutchento\Vatfallback\Model\VatNumber;
 
 interface ConfigInterface

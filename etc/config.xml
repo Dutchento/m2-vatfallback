@@ -5,10 +5,16 @@
 			<vatfallback>
 				<vies_validation>1</vies_validation>
 				<vies_timeout>2</vies_timeout>
+
 				<vatlayer_validation>0</vatlayer_validation>
+				<vatlayer_apikey></vatlayer_apikey>
+				<vatlayer_use_https>0</vatlayer_use_https>
 				<vatlayer_timeout>2</vatlayer_timeout>
-				<isvat_validation/>
-				<regex_validation/>
+
+				<regexp_validation>1</regexp_validation>
+
+                <cache_validation>0</cache_validation>
+                <cache_lifetime>86400</cache_lifetime>
 			</vatfallback>
 		</customer>
 	</default>

@@ -1,19 +1,19 @@
 # Vatfallback for Magento 2
 
-Vatfallback module provides an extra API based validation and a fallback offline regex validation 
+Vatfallback module provides an API based validation and a fallback offline regex validation 
 for the unstable VIES database used by Magento
 
 Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfallback/).
 
 ## Supported services
 
-- Built in Magento VIES check
-- Custom VIES check (this is not the official endpoint but an internal one)
+- VIES check (this is the official endpoint but not the built-in Magento version)
 - vatlayer.com check
 - Regex fallback check for following countries; AT, BE, CZ, DE, CY, DK, EE, GR, ES, FI, FR, GB, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, SE, SI, SK
+- Caching of previous results
 
 ## Features
-1) A plugin wraps the existing Vat check in Magento Customer implementing various services as fallback.
+1) A plugin that replaces the existing VAT check in Magento Customer implementing various services with means of fallback.
 
 2) Use the console task:
 `./bin/magento vat:validate NL NL133001477B01`
@@ -21,21 +21,27 @@ Please find the [Magento 1 version here](https://github.com/sandermangel/rkvatfa
 3) Use the API endpoint to get company data by VAT number
 `http://domain.com/rest/V1/vat/companylookup/NL133001477B01`
 
+4) Add a GraphQL endpoint by installing [elgentos/m2-vatfallback-graph-ql](https://github.com/elgentos/m2-vatfallback-graph-ql)
+
+5) Caching service for VAT request (be sure to enable the VAT cache under Cache Management)
+
+## Installation
+``` shell
+composer require dutchento/m2-vatfallback
+bin/magento setup:upgrade
+```
+
 ## Tested on
 
-- Magento 2.2 Community & Commerce
+- Magento 2.2
+- Magento 2.3
+- Magento 2.4
 
 ## Changelog
-[1.2.0] added a timeout sys conf value for connecting to APIs
-
-[1.1.1] fixed a logic error in calling fallback services including a false positives fix for the unofficial VIES endpoint by Laura Folco
-
-[1.1.0] add an API endpoint for company data
-
-[1.0.0] ported version of the Magento 1 module
+See https://github.com/Dutchento/m2-vatfallback/releases
 
 ## Requirements
-- PHP 7
+- PHP >= 7.0
 - GuzzleHTTP
 
 ## Disclaimer
@@ -45,6 +51,7 @@ Warning: Since all of the free VIES API's are slow and somewhat unreliable the c
 ## Authors
 
 - Sander Mangel [Github](https://github.com/sandermangel) [Twitter](https://twitter.com/sandermangel)
+- Jeroen Boersma [Github](https://github.com/jeroenboersma) [Twitter](https://twitter.com/srcoder)
 - Timon de Groot [Github](https://github.com/tdgroot) [Twitter](https://twitter.com/TimonGreat)
 
 ### Authors M1 Version

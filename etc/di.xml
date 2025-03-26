@@ -1,16 +1,70 @@
 <?xml version="1.0" ?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-	<preference for="Dutchento\Vatfallback\Api\CompanyLookupInterface" type="Dutchento\Vatfallback\Api\CompanyLookup" />
-	<preference for="Dutchento\Vatfallback\Model\VatNumber\ConfigInterface" type="Dutchento\Vatfallback\Model\VatNumber\Config"/>
-	<preference for="Dutchento\Vatfallback\Service\ValidateVatInterface" type="Dutchento\Vatfallback\Service\ValidateVat" />
-	<type name="Magento\Customer\Model\Vat">
-		<plugin disabled="false" name="Dutchento_Vatfallback_Plugin_Magento_Customer_Model_Vat" sortOrder="10" type="Dutchento\Vatfallback\Plugin\Magento\Customer\Model\Vat"/>
-	</type>
-	<type name="Magento\Framework\Console\CommandList">
-		<arguments>
-			<argument name="commands" xsi:type="array">
-				<item name="test" xsi:type="object">Dutchento\Vatfallback\Console\Command\Validate</item>
-			</argument>
-		</arguments>
-	</type>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Dutchento\Vatfallback\Api\CompanyLookupInterface"
+                type="Dutchento\Vatfallback\Api\CompanyLookup"/>
+    <preference for="Dutchento\Vatfallback\Api\Data\CompanyLookupResultInterface"
+                type="Dutchento\Vatfallback\Api\Data\CompanyLookupResult"/>
+    <preference for="Dutchento\Vatfallback\Service\ValidateVatInterface"
+                type="Dutchento\Vatfallback\Service\ValidateVat"/>
+    <preference for="Dutchento\Vatfallback\Model\VatNumber\ConfigInterface"
+                type="Dutchento\Vatfallback\Model\VatNumber\Config"/>
+    <preference for="Dutchento\Vatfallback\Service\ConfigurationInterface"
+                type="Dutchento\Vatfallback\Service\Configuration"/>
+    <preference for="Dutchento\Vatfallback\Service\CacheInterface"
+                type="Dutchento\Vatfallback\Service\Cache"/>
+
+    <type name="Magento\Customer\Model\Vat">
+        <plugin name="Dutchento_Vatfallback_Plugin_Magento_Customer_Model_Vat" sortOrder="10"
+                type="Dutchento\Vatfallback\Plugin\Magento\Customer\Model\Vat"/>
+    </type>
+    <type name="Dutchento\Vatfallback\Service\Validate\ValidationServiceInterface">
+        <plugin name="Dutchento_Vatfallback_Plugin_Service_Validate_ValidationServiceInterface" sortOrder="10"
+                type="Dutchento\Vatfallback\Plugin\Service\Validate\ValidationService"/>
+    </type>
+
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="dutchento_vatfallback_validate" xsi:type="object">Dutchento\Vatfallback\Console\Command\Validate</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="VatNumberConfigReader" type="Magento\Framework\Config\Reader\Filesystem">
+        <arguments>
+            <argument name="idAttributes" xsi:type="array">
+                <item name="/config/vat_number" xsi:type="string">countryCode</item>
+            </argument>
+            <argument name="fileName" xsi:type="string">vat_numbers.xml</argument>
+            <argument name="converter" xsi:type="object">Dutchento\Vatfallback\Model\VatNumber\Config\Converter
+            </argument>
+            <argument name="schemaLocator" xsi:type="object">
+                Dutchento\Vatfallback\Model\VatNumber\Config\SchemaLocator
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="VatNumberConfigData" type="Magento\Framework\Config\Data">
+        <arguments>
+            <argument name="reader" xsi:type="object">VatNumberConfigReader</argument>
+            <argument name="cacheId" xsi:type="string">vat_numbers</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Dutchento\Vatfallback\Model\VatNumber\Config">
+        <arguments>
+            <argument name="dataSource" xsi:type="object">VatNumberConfigData</argument>
+        </arguments>
+    </type>
+    <type name="Dutchento\Vatfallback\Service\ValidateVat">
+        <arguments>
+            <argument name="validationServices" xsi:type="array">
+                <item name="cache" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Cache</item>
+                <item name="vies" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Vies</item>
+                <item name="vatlayer" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Vatlayer</item>
+                <item name="regexp" xsi:type="object">Dutchento\Vatfallback\Service\Validate\Regex</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

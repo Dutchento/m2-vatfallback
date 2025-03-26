@@ -9,16 +9,23 @@
 
 namespace Dutchento\Vatfallback\Service\Validate;
 
+use Dutchento\Vatfallback\Service\ConfigurationInterface;
+use Dutchento\Vatfallback\Service\Exceptions\InvalidConfigurationException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationDisabledException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationFailedException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationIgnoredException;
+use Dutchento\Vatfallback\Service\Exceptions\ValidationUnavailableException;
 use Dutchento\Vatfallback\Service\Vatlayer\Client as VatlayerClient;
-use \Magento\Framework\App\Config\ScopeConfigInterface;
+use Exception;
 
+/**
+ * Class Vatlayer
+ * @package Dutchento\Vatfallback\Service\Validate
+ */
 class Vatlayer implements ValidationServiceInterface
 {
-    /** @var bool */
-    protected $vatlayerIsEnabled;
-
-    /** @var string */
-    protected $vatlayerApiKey;
+    /** @var ConfigurationInterface */
+    protected $configuration;
 
     /** @var VatlayerClient  */
     protected $vatlayerClient;
@@ -28,18 +35,19 @@ class Vatlayer implements ValidationServiceInterface
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
+        ConfigurationInterface $configuration,
         VatlayerClient $vatlayerClient
     ) {
+        $this->configuration = $configuration;
         $this->vatlayerClient = $vatlayerClient;
-        $this->vatlayerIsEnabled = (bool)$scopeConfig->getValue(
-            'customer/vatfallback/vatlayer_validation',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
-        $this->vatlayerApiKey = (string)$scopeConfig->getValue(
-            'customer/vatfallback/vatlayer_apikey',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValidationServiceName(): string
+    {
+        return 'Vatlayer';
     }
 
     /**
@@ -48,18 +56,58 @@ class Vatlayer implements ValidationServiceInterface
      */
     public function validateVATNumber(string $vatNumber, string $countryIso2): bool
     {
-        // check if service is enabled and configured
-        if (!$this->vatlayerIsEnabled || '' === $this->vatlayerApiKey) {
-            return false;
+        if (!$this->configuration->isVatlayerValidation()) {
+            throw new ValidationDisabledException('Vatlayer is disabled');
+        }
+
+        $apiKey = $this->configuration->getVatlayerApikey();
+        if (empty($apiKey)) {
+            throw new InvalidConfigurationException('Vatlayer API is not setup correctly');
         }
 
         // call API layer endpoint
         try {
-            $clientResponse = $this->vatlayerClient->retrieveVatnumberEndpoint($vatNumber, $countryIso2);
-        } catch (\Exception $error) {
-            throw new FailedValidationException("HTTP error {$error->getMessage()}");
+            $response = $this->vatlayerClient
+                ->retrieveVatnumberEndpoint(
+                    $vatNumber,
+                    $countryIso2,
+                    $apiKey,
+                    $this->configuration->getVatlayerTimeout(),
+                    $this->configuration->getVatlayerHttpsEnabled()
+                );
+        } catch (Exception $exception) {
+            throw new ValidationUnavailableException("API unavailable {$exception->getMessage()}");
         }
 
-        return (bool)$clientResponse['valid'];
+        $contents = $response->getBody()->getContents();
+
+        // did we get a valid statuscode
+        if ($response->getStatusCode() > 299) {
+            throw new ValidationUnavailableException("API unavailable returns: status {$response->getStatusCode()} '{$contents}'");
+        }
+
+        // Response body should be JSON
+        $result = json_decode($contents, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new ValidationFailedException("No valid JSON response, body {$contents}");
+        }
+
+        if (isset($result['error'])) {
+            throw new ValidationFailedException('Vatlayer could not be queried ' . $result['error']['info']);
+        }
+
+        if ((! isset($result['valid'])) || (! isset($result['database']))) {
+            throw new ValidationIgnoredException('Vatlayer did not return validation');
+        }
+
+        if ($result['database'] === 'failure') {
+            throw new ValidationFailedException('Vatlayer returns: database failure (could not connect to member state)');
+        }
+
+        if ($result['database'] !== 'ok') {
+            throw new ValidationFailedException('Vatlayer database not ok');
+        }
+
+        return (bool)$result['valid'];
     }
 }

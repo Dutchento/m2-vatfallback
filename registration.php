@@ -1,7 +1,16 @@
 <?php
+/**
+ * Dutchento Vatfallback
+ * Provides free VAT fallback mechanism
+ * Copyright (C) 2018 Dutchento
+ *
+ * MIT license applies to this software
+ */
 
-\Magento\Framework\Component\ComponentRegistrar::register(
-    \Magento\Framework\Component\ComponentRegistrar::MODULE,
+use Magento\Framework\Component\ComponentRegistrar;
+
+ComponentRegistrar::register(
+    ComponentRegistrar::MODULE,
     'Dutchento_Vatfallback',
     __DIR__
 );

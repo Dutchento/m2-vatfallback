@@ -9,19 +9,28 @@
 
 namespace Dutchento\Vatfallback\Console\Command;
 
+use Dutchento\Vatfallback\Service\Exceptions\NoValidationException;
 use Dutchento\Vatfallback\Service\ValidateVatInterface;
+use Magento\Framework\Console\Cli;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class Validate
+ * @package Dutchento\Vatfallback\Console\Command
+ */
 class Validate extends Command
 {
+    /**
+     * @var ValidateVatInterface
+     */
     private $validationService;
 
     /**
-    * @param ValidateVatInterface $validationService
-    */
+     * @param ValidateVatInterface $validationService
+     */
     public function __construct(
         ValidateVatInterface $validationService
     ) {
@@ -39,12 +48,19 @@ class Validate extends Command
         $country = $input->getArgument('country');
         $number = $input->getArgument('number');
 
-        $result = $this->validationService->byNumberAndCountry($number, $country);
+        try {
+            $result = $this->validationService->byNumberAndCountry($number, $country);
 
-        if ($result['result']) {
-            $output->writeln("Success is: {$result['result']}, with service {$result['service']}");
-        } else {
-            $output->writeln("Invalid VAT number, with service {$result['service']}");
+            if ($result['result']) {
+                $output->writeln("Success is: {$result['result']}, with service {$result['service']}");
+                return Cli::RETURN_SUCCESS;
+            } else {
+                $output->writeln("Invalid VAT number, with service {$result['service']}");
+                return Cli::RETURN_FAILURE;
+            }
+        } catch (NoValidationException $exception) {
+            $output->writeln("No validation took place");
+            return Cli::RETURN_FAILURE;
         }
     }
 
@@ -59,7 +75,7 @@ class Validate extends Command
             new InputArgument('country', InputArgument::REQUIRED, 'country'),
             new InputArgument('number', InputArgument::REQUIRED, 'number')
         ]);
-        
+
         parent::configure();
     }
 }

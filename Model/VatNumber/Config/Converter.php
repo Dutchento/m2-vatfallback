@@ -61,9 +61,9 @@ class Converter implements ConverterInterface
      */
     public function stripAndValidatePattern(string $pattern): string
     {
-        $pattern = trim($vatNumberNode->textContent);
-        $pattern = '/' .trim($pattern, '/') . '/';
-        if (preg_match($pattern, null) === false) {
+        $pattern = trim($pattern);
+        $pattern = '/' . trim($pattern, '/') . '/';
+        if (preg_match($pattern, '') === false) {
             throw new \InvalidArgumentException("Regex pattern '{$pattern}' does not appear to be valid");
         }
 
